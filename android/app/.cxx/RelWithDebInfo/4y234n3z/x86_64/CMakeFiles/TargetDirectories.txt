@@ -1,0 +1,2 @@
+C:/Flutter Project/vibe_connect/android/app/.cxx/RelWithDebInfo/4y234n3z/x86_64/CMakeFiles/edit_cache.dir
+C:/Flutter Project/vibe_connect/android/app/.cxx/RelWithDebInfo/4y234n3z/x86_64/CMakeFiles/rebuild_cache.dir

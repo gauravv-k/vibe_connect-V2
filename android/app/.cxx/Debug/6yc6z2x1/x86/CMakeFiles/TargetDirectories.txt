@@ -1,0 +1,2 @@
+C:/Users/adars/OneDrive/Desktop/vibe_connect/android/app/.cxx/Debug/6yc6z2x1/x86/CMakeFiles/edit_cache.dir
+C:/Users/adars/OneDrive/Desktop/vibe_connect/android/app/.cxx/Debug/6yc6z2x1/x86/CMakeFiles/rebuild_cache.dir

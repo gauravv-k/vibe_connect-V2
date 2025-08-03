@@ -1,0 +1,2 @@
+C:/vibe_connect/android/app/.cxx/RelWithDebInfo/2s4d5sq5/x86/CMakeFiles/edit_cache.dir
+C:/vibe_connect/android/app/.cxx/RelWithDebInfo/2s4d5sq5/x86/CMakeFiles/rebuild_cache.dir

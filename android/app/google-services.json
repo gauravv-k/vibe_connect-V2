@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1004642553669",
+    "project_id": "vibeconnect-e8467",
+    "storage_bucket": "vibeconnect-e8467.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1004642553669:android:da07bb91dd99ca146f382c",
+        "android_client_info": {
+          "package_name": "com.example.vibe_connect"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAyssCAkFQuYp-4KcsRGch6JANNTYpKScI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
