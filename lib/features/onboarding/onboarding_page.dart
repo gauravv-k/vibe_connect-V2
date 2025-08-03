@@ -18,17 +18,17 @@ class OnboardingPage extends StatelessWidget {
             children: [
               // App icon
               SizedBox(
-                width: 250,
-                height: 250,
+                width: 190,
+                height: 190,
                 child: Image.asset(
-                  'assets/images/video.png',
+                  'assets/images/logo.png',
                   fit: BoxFit.contain,
                 ),
               ),
-              const SizedBox(height: 3),
+              const SizedBox(height: 30),
               // Main title
               Text(
-                'ONE APP TO TURN\nYOUR IDEAS INTO\nVIDEOS\nINSTANTLY.', 
+                'Sync Your VOICE\nInto Your LIFE\nINSTANTLY.', 
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: 'Urbanist',
@@ -99,9 +99,9 @@ class OnboardingPage extends StatelessWidget {
               // Divider with OR
               Row(
                 children: [
-                  const Expanded(
+                  Expanded(
                     child: Divider(
-                      color: Color(0xFF35313F),
+                      color: Theme.of(context).colorScheme.outline,
                       thickness: 1,
                     ),
                   ),
@@ -110,7 +110,7 @@ class OnboardingPage extends StatelessWidget {
                     child: Text(
                       'OR',
                       style: TextStyle(
-                        color: Theme.of(context).colorScheme.inversePrimary.withOpacity(0.7),
+                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
                         fontFamily: 'Urbanist',
                         fontWeight: FontWeight.w600,
                         fontSize: 14,
@@ -118,9 +118,9 @@ class OnboardingPage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const Expanded(
+                  Expanded(
                     child: Divider(
-                      color: Color(0xFF35313F),
+                      color: Theme.of(context).colorScheme.outline,
                       thickness: 1,
                     ),
                   ),
@@ -141,6 +141,7 @@ class OnboardingPage extends StatelessWidget {
                       'assets/images/ghost-linear.png',
                       width: 22,
                       height: 22,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   label: const Text(
@@ -152,12 +153,12 @@ class OnboardingPage extends StatelessWidget {
                     ),
                   ),
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: Theme.of(context).colorScheme.inversePrimary,
-                    side: const BorderSide(
-                      color: Color(0xFF23202A),
+                    foregroundColor: Theme.of(context).colorScheme.onSurface,
+                    side: BorderSide(
+                      color: Theme.of(context).colorScheme.outline,
                       width: 1.5,
                     ),
-                    backgroundColor: const Color(0xFF18151F),
+                    backgroundColor: Theme.of(context).colorScheme.surface,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),

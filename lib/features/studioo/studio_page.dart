@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import '../app_bar/app_bar.dart';
 import 'widgets/ai_creation_card.dart';
+import 'package:vibe_connect/features/app_bar/app_drawer.dart';
 
 class AiStudioPage extends StatelessWidget {
   const AiStudioPage({super.key});
@@ -21,7 +22,7 @@ class AiStudioPage extends StatelessWidget {
 
     return Scaffold(
       appBar: const CustomAppBar(title: "Studio"),
-      drawer: const Drawer(),
+      drawer: const AppDrawer(),
       body: Center(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: verticalPadding),

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:vibe_connect/features/ai_meet/services/api_call.dart';
+import 'package:vibe_connect/features/ai_meet/testui/meeting_screen.dart';
 import 'package:vibe_connect/features/ai_meet/ui/askjoin.dart';
+import 'package:vibe_connect/features/ai_meet/ui/meet_page.dart';
 
 class JoiningPage extends StatefulWidget {
   const JoiningPage({super.key});
@@ -9,12 +12,32 @@ class JoiningPage extends StatefulWidget {
 }
 
 class _JoiningPageState extends State<JoiningPage> {
-  final TextEditingController _codeController = TextEditingController();
+  final TextEditingController _meetingIdController = TextEditingController();
 
   @override
   void dispose() {
-    _codeController.dispose();
+    _meetingIdController.dispose();
     super.dispose();
+  }
+
+  void _onJoinMeeting(BuildContext context) {
+    String meetingId = _meetingIdController.text;
+    var re = RegExp(r"\w{4}-\w{4}-\w{4}");
+    if (meetingId.isNotEmpty && re.hasMatch(meetingId)) {
+      _meetingIdController.clear();
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => MeetPage(
+            meetingId: meetingId,
+            token: token,
+          ),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Please enter a valid meeting ID"),
+      ));
+    }
   }
 
   @override
@@ -50,45 +73,16 @@ class _JoiningPageState extends State<JoiningPage> {
             padding: const EdgeInsets.only(right: 8.0),
             child: TextButton(
               onPressed: () {
-                // Handle join action
+                Navigator.pop(context); // Close the bottom sheet
+                _onJoinMeeting(context);
               },
               style: TextButton.styleFrom(
-                minimumSize: const Size(80, 50),
-                padding: EdgeInsets.zero,
+                minimumSize: const Size(80, 60), // Ensures width for 'Cancel'
+                padding: EdgeInsets.zero, // Avoid extra padding
               ),
-              child: TextButton(
-                onPressed: () {
-                  Navigator.pop(context); // Close the bottom sheet
-                  Navigator.push(
-                    context,
-                    PageRouteBuilder(
-                      pageBuilder: (context, animation, secondaryAnimation) =>
-                          const AskJoiningPage(),
-                      transitionsBuilder:
-                          (context, animation, secondaryAnimation, child) {
-                        const begin = Offset(1.0, 0.0);
-                        const end = Offset.zero;
-                        const curve = Curves.ease;
-
-                        var tween = Tween(begin: begin, end: end)
-                            .chain(CurveTween(curve: curve));
-
-                        return SlideTransition(
-                          position: animation.drive(tween),
-                          child: child,
-                        );
-                      },
-                    ),
-                  );
-                },
-                style: TextButton.styleFrom(
-                  minimumSize: const Size(80, 60), // Ensures width for 'Cancel'
-                  padding: EdgeInsets.zero, // Avoid extra padding
-                ),
-                child: const Text(
-                  'Join',
-                  style: TextStyle(color: Colors.blue, fontSize: 15),
-                ),
+              child: const Text(
+                'Join',
+                style: TextStyle(color: Colors.blue, fontSize: 15),
               ),
             ),
           ),
@@ -105,7 +99,7 @@ class _JoiningPageState extends State<JoiningPage> {
             ),
             const SizedBox(height: 20),
             TextField(
-              controller: _codeController,
+              controller: _meetingIdController,
               autofocus: true, // This will automatically pop up the keyboard
               decoration: InputDecoration(
                 hintText: 'Example: abc-mnop-xyz',

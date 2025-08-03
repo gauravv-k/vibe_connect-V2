@@ -159,17 +159,17 @@ class _RegisterPageState extends State<RegisterPage> {
                   RichText(
                     textAlign: TextAlign.center,
                     text: TextSpan(
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                       children: [
                         const TextSpan(text: 'Welcome Back to '),
                         TextSpan(
-                          text: 'Deep Vid',
-                          style: const TextStyle(
-                            color: Color(0xFF9066B8), // Purple
+                          text: 'Vibe Connect',
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary, // Purple
                           ),
                         ),
                       ],
@@ -178,12 +178,12 @@ class _RegisterPageState extends State<RegisterPage> {
                   const SizedBox(height: 15),
 
                   // Subtitle
-                  const Text(
+                  Text(
                     'Sign up or Login with',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 16,
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: 15),
@@ -200,7 +200,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               color: Theme.of(context).colorScheme.surface,
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(
-                                color: const Color(0xFFC0A9EA),
+                                color: Theme.of(context).colorScheme.primary,
                                 width: 0.5,
                               ),
                             ),
@@ -224,7 +224,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                       fontWeight: FontWeight.w500,
                                       fontStyle: FontStyle.normal,
                                       fontSize: 15,
-                                      color: Color(0xFFC0A9EA),
+                                      color: Theme.of(context).colorScheme.primary,
                                     ),
                                   ),
                                 ),
@@ -243,7 +243,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               color: Theme.of(context).colorScheme.surface,
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(
-                                color: const Color(0xFFC0A9EA),
+                                color: Theme.of(context).colorScheme.primary,
                                 width: 0.5,
                               ),
                             ),
@@ -267,7 +267,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                       fontWeight: FontWeight.w500,
                                       fontStyle: FontStyle.normal,
                                       fontSize: 15,
-                                      color: Color(0xFFC0A9EA),
+                                      color: Theme.of(context).colorScheme.primary,
                                     ),
                                   ),
                                 ),
@@ -288,7 +288,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           padding: const EdgeInsets.only(left: 15),
                           child: Container(
                             height: 1,
-                            color: const Color(0xFF333333),
+                            color: Theme.of(context).colorScheme.outline,
                           ),
                         ),
                       ),
@@ -301,7 +301,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             fontFamily: 'Urbanist',
                             fontWeight: FontWeight.w400,
                             fontStyle: FontStyle.normal,
-                            color: Colors.white,
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontSize: 14,
                           ),
                         ),
@@ -311,7 +311,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           padding: const EdgeInsets.only(right: 15),
                           child: Container(
                             height: 1,
-                            color: const Color(0xFF333333),
+                            color: Theme.of(context).colorScheme.outline,
                           ),
                         ),
                       ),
@@ -319,7 +319,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   const SizedBox(height: 12),
                   // Name  Field
-                  const SizedBox(
+                  SizedBox(
                     width: 365,
                     height: 19,
                     child: Text(
@@ -331,7 +331,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         fontSize: 16,
                         height: 1.0,
                         letterSpacing: 0,
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.onSurface,
                         // opacity: 1 is default for Text
                       ),
                     ),
@@ -344,16 +344,16 @@ class _RegisterPageState extends State<RegisterPage> {
                       color: Theme.of(context).colorScheme.surface,
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
-                        color: const Color(0xFF2B2B39),
+                        color: Theme.of(context).colorScheme.outline,
                         width: 1,
                       ),
                     ),
                     padding: const EdgeInsets.all(12),
                     child: Row(
                       children: [
-                        const Icon(
-                          Icons.email_outlined,
-                          color: Color(0xFF888888),
+                        Icon(
+                          Icons.person_outline,
+                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
                           size: 15,
                         ),
                         const SizedBox(width: 4),
@@ -362,15 +362,15 @@ class _RegisterPageState extends State<RegisterPage> {
                             controller: nameController,
                             obscureText: false,
                             textAlign: TextAlign.start,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontFamily: 'Urbanist',
                               fontWeight: FontWeight.w400,
                               fontStyle: FontStyle.normal,
                               fontSize: 16,
                               height: 1.0,
-                              color: Color(0xB2D2CFE1), // #D2CFE1B2
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                               hintText: 'Enter your name',
                               hintStyle: TextStyle(
                                 fontFamily: 'Urbanist',
@@ -378,7 +378,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 fontStyle: FontStyle.normal,
                                 fontSize: 12,
                                 height: 1.0,
-                                color: Color(0xB2D2CFE1), // #D2CFE1B2
+                                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
                               ),
                               border: InputBorder.none,
                               isCollapsed: true,
@@ -391,7 +391,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   const SizedBox(height: 16),
                   // Email Field
-                  const SizedBox(
+                  SizedBox(
                     width: 365,
                     height: 19,
                     child: Text(
@@ -403,7 +403,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         fontSize: 16,
                         height: 1.0,
                         letterSpacing: 0,
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.onSurface,
                         // opacity: 1 is default for Text
                       ),
                     ),
@@ -416,16 +416,16 @@ class _RegisterPageState extends State<RegisterPage> {
                       color: Theme.of(context).colorScheme.surface,
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
-                        color: const Color(0xFF2B2B39),
+                        color: Theme.of(context).colorScheme.outline,
                         width: 1,
                       ),
                     ),
                     padding: const EdgeInsets.all(12),
                     child: Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.email_outlined,
-                          color: Color(0xFF888888),
+                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
                           size: 15,
                         ),
                         const SizedBox(width: 4),
@@ -434,15 +434,15 @@ class _RegisterPageState extends State<RegisterPage> {
                             controller: emailController,
                             obscureText: false,
                             textAlign: TextAlign.start,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontFamily: 'Urbanist',
                               fontWeight: FontWeight.w400,
                               fontStyle: FontStyle.normal,
                               fontSize: 16,
                               height: 1.0,
-                              color: Color(0xB2D2CFE1), // #D2CFE1B2
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                               hintText: 'Enter your email',
                               hintStyle: TextStyle(
                                 fontFamily: 'Urbanist',
@@ -450,7 +450,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 fontStyle: FontStyle.normal,
                                 fontSize: 12,
                                 height: 1.0,
-                                color: Color(0xB2D2CFE1), // #D2CFE1B2
+                                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
                               ),
                               border: InputBorder.none,
                               isCollapsed: true,
@@ -464,7 +464,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   const SizedBox(height: 16),
 
                   // Password Field
-                  const SizedBox(
+                  SizedBox(
                     width: 365,
                     height: 19,
                     child: Text(
@@ -476,7 +476,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         fontSize: 16,
                         height: 1.0,
                         letterSpacing: 0,
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.onSurface,
                         // opacity: 1 is default for Text
                       ),
                     ),
@@ -489,16 +489,16 @@ class _RegisterPageState extends State<RegisterPage> {
                       color: Theme.of(context).colorScheme.surface,
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
-                        color: const Color(0xFF2B2B39),
+                        color: Theme.of(context).colorScheme.outline,
                         width: 1,
                       ),
                     ),
                     padding: const EdgeInsets.all(12),
                     child: Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.lock_outline,
-                          color: Color(0xFF888888),
+                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
                           size: 15,
                         ),
                         const SizedBox(width: 4),
@@ -507,15 +507,15 @@ class _RegisterPageState extends State<RegisterPage> {
                             controller: passwordController,
                             obscureText: true,
                             textAlign: TextAlign.start,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontFamily: 'Urbanist',
                               fontWeight: FontWeight.w400,
                               fontStyle: FontStyle.normal,
                               fontSize: 16,
                               height: 1.0,
-                              color: Color(0xB2D2CFE1), // #D2CFE1B2
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                               hintText: 'Enter your password',
                               hintStyle: TextStyle(
                                 fontFamily: 'Urbanist',
@@ -523,7 +523,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 fontStyle: FontStyle.normal,
                                 fontSize: 12,
                                 height: 1.0,
-                                color: Color(0xB2D2CFE1), // #D2CFE1B2
+                                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
                               ),
                               border: InputBorder.none,
                               isCollapsed: true,
@@ -538,7 +538,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   const SizedBox(height: 16),
 
                   // Confirm Password Field
-                  const SizedBox(
+                  SizedBox(
                     width: 365,
                     height: 19,
                     child: Text(
@@ -550,7 +550,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         fontSize: 16,
                         height: 1.0,
                         letterSpacing: 0,
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.onSurface,
                         // opacity: 1 is default for Text
                       ),
                     ),
@@ -563,16 +563,16 @@ class _RegisterPageState extends State<RegisterPage> {
                       color: Theme.of(context).colorScheme.surface,
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
-                        color: const Color(0xFF2B2B39),
+                        color: Theme.of(context).colorScheme.outline,
                         width: 1,
                       ),
                     ),
                     padding: const EdgeInsets.all(12),
                     child: Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.lock_outline,
-                          color: Color(0xFF888888),
+                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
                           size: 15,
                         ),
                         const SizedBox(width: 4),
@@ -581,15 +581,15 @@ class _RegisterPageState extends State<RegisterPage> {
                             controller: confirmPasswordController,
                             obscureText: true,
                             textAlign: TextAlign.start,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontFamily: 'Urbanist',
                               fontWeight: FontWeight.w400,
                               fontStyle: FontStyle.normal,
                               fontSize: 16,
                               height: 1.0,
-                              color: Color(0xB2D2CFE1), // #D2CFE1B2
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                               hintText: 'Confirm your password',
                               hintStyle: TextStyle(
                                 fontFamily: 'Urbanist',
@@ -597,7 +597,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 fontStyle: FontStyle.normal,
                                 fontSize: 12,
                                 height: 1.0,
-                                color: Color(0xB2D2CFE1), // #D2CFE1B2
+                                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
                               ),
                               border: InputBorder.none,
                               isCollapsed: true,
@@ -658,12 +658,12 @@ class _RegisterPageState extends State<RegisterPage> {
                       Flexible(
                         child: Text(
                           "Already have an account..        ",
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontFamily: 'Urbanist',
                             fontWeight: FontWeight.w400,
                             fontStyle: FontStyle.normal,
                             fontSize: 12,
-                            color: Colors.white,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -674,8 +674,8 @@ class _RegisterPageState extends State<RegisterPage> {
                           Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginPage()));
                         },
                         style: OutlinedButton.styleFrom(
-                          side: const BorderSide(
-                            color: Color(0xFFB39DDB), // Light purple border
+                          side: BorderSide(
+                            color: Theme.of(context).colorScheme.primary, // Light purple border
                             width: 0.5,
                           ),
                           shape: RoundedRectangleBorder(
@@ -694,18 +694,18 @@ class _RegisterPageState extends State<RegisterPage> {
                               Text(
                                 "Log in",
                                 textAlign: TextAlign.center,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontFamily: 'Urbanist',
                                   fontWeight: FontWeight.w500,
                                   fontStyle: FontStyle.normal,
                                   fontSize: 17,
-                                  color: Color(0xFFB39DDB), // Light purple text
+                                  color: Theme.of(context).colorScheme.primary, // Light purple text
                                 ),
                               ),
                               const SizedBox(width: 8),
-                              const Icon(
+                              Icon(
                                 Icons.arrow_right_alt_rounded,
-                                color: Color(0xFFB39DDB),
+                                color: Theme.of(context).colorScheme.primary,
                                 size: 25,
                               ),
                             ],

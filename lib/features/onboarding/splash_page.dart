@@ -136,8 +136,8 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(
-                  width: 197, // Smaller width
-                  height: 197, // Smaller height
+                  width: 190, // Smaller width
+                  height: 190, // Smaller height
                   child: Image.asset(
                     'assets/images/logo.png',
                     fit: BoxFit.contain,
@@ -150,7 +150,7 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
                 SlideTransition(
                   position: _slideAnimation,
                   child: Text(
-                    'DeepVid',
+                    'Vibe Connect',
                     style: TextStyle(
                       fontSize: 30,
                       fontWeight: FontWeight.w600,
@@ -169,7 +169,7 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
                 SlideTransition(
                   position: _slideAnimation,
                   child: Text(
-                    'AI Faceless Video Generator',
+                    'AI Integrated VideoCalls ',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w400,

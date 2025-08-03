@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vibe_connect/features/app_bar/app_bar.dart';
 import 'package:vibe_connect/features/storage/storage_tile.dart';
 import 'package:vibe_connect/features/studioo/studio_page.dart';
+import 'package:vibe_connect/features/app_bar/app_drawer.dart';
 
 class StoragePage extends StatefulWidget {
   const StoragePage({super.key});
@@ -50,7 +51,7 @@ class _StoragePageState extends State<StoragePage> {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: const CustomAppBar(title: "Storage"),
-      drawer: const Drawer(),
+      drawer: const AppDrawer(),
       body: CustomScrollView(
         controller: _scrollController,
         physics: const BouncingScrollPhysics(),

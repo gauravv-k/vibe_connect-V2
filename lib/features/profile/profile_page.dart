@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:vibe_connect/features/app_bar/app_bar.dart';
+import 'package:vibe_connect/features/app_bar/app_drawer.dart';
 import 'package:vibe_connect/utils/size_config.dart';
 import 'presentation/cubits/profile_cubit.dart';
 import 'presentation/cubits/profile_states.dart';
@@ -31,7 +32,7 @@ class _ProfilePageState extends State<ProfilePage> {
     SizeConfig().init(context);
     return Scaffold(
       appBar: CustomAppBar(title: "Profile"),
-      drawer: const Drawer(),
+      drawer: const AppDrawer(),
       body: BlocConsumer<ProfileCubit, ProfileStates>(
         listener: (context, state) {
           if (state is ProfileError) {
@@ -92,7 +93,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   height: 80.w,
                   child: ClipOval(
                     child: Image.asset(
-                      'assets/images/profile1.jpg',
+                      'assets/images/profile11.png',
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -156,29 +157,29 @@ class _ProfilePageState extends State<ProfilePage> {
           _buildReferEarnCard(),
           SizedBox(height: 32.h),
 
-          // Other Section
-          Text(
-            'Other',
-            style: TextStyle(
-              fontSize: 20.sp,
-              fontWeight: FontWeight.w600,
-              color: theme.colorScheme.inversePrimary,
-              fontFamily: 'Urbanist',
-            ),
-          ),
-          SizedBox(height: 16.h),
+          // // Other Section
+          // Text(
+          //   'Other',
+          //   style: TextStyle(
+          //     fontSize: 20.sp,
+          //     fontWeight: FontWeight.w600,
+          //     color: theme.colorScheme.inversePrimary,
+          //     fontFamily: 'Urbanist',
+          //   ),
+          // ),
+          // SizedBox(height: 16.h),
 
-          // Other Options
-          _buildOtherOption(
-            Icons.settings,
-            'Settings',
-            onTap: () {},
-            theme: theme,
-          ),
-          _buildOtherOption(Icons.receipt, 'Invoice History', theme: theme),
-          _buildOtherOption(Icons.description, 'Terms & Conditions', theme: theme),
-          _buildOtherOption(Icons.privacy_tip, 'Privacy Policy', theme: theme),
-          _buildOtherOption(Icons.feedback, 'Feedback', theme: theme),
+          // // // Other Options
+          // // _buildOtherOption(
+          //   Icons.settings,
+          //   'Settings',
+          //   onTap: () {},
+          //   theme: theme,
+          // ),
+          // _buildOtherOption(Icons.receipt, 'Invoice History', theme: theme),
+          // _buildOtherOption(Icons.description, 'Terms & Conditions', theme: theme),
+          // _buildOtherOption(Icons.privacy_tip, 'Privacy Policy', theme: theme),
+          // _buildOtherOption(Icons.feedback, 'Feedback', theme: theme),
         ],
       ),
     );
@@ -440,49 +441,49 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildOtherOption(IconData icon, String title, {VoidCallback? onTap, required ThemeData theme}) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 12.h),
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.secondary,
-        borderRadius: BorderRadius.circular(8.w),
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(8.w),
-          onTap: onTap,
-          child: Row(
-            children: [
-              Icon(
-                icon,
-                color: theme.colorScheme.inversePrimary,
-                size: 20.w,
-              ),
-              SizedBox(width: 12.w),
-              Expanded(
-                child: Text(
-                  title,
-                  style: TextStyle(
-                    color: theme.colorScheme.inversePrimary,
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w500,
-                    fontFamily: 'Urbanist',
-                  ),
-                ),
-              ),
-              Icon(
-                Icons.chevron_right,
-                color: theme.colorScheme.inversePrimary,
-                size: 20.w,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+  // Widget _buildOtherOption(IconData icon, String title, {VoidCallback? onTap, required ThemeData theme}) {
+  //   return Container(
+  //     margin: EdgeInsets.only(bottom: 12.h),
+  //     padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+  //     decoration: BoxDecoration(
+  //       color: theme.colorScheme.secondary,
+  //       borderRadius: BorderRadius.circular(8.w),
+  //     ),
+  //     child: Material(
+  //       color: Colors.transparent,
+  //       child: InkWell(
+  //         borderRadius: BorderRadius.circular(8.w),
+  //         onTap: onTap,
+  //         child: Row(
+  //           children: [
+  //             Icon(
+  //               icon,
+  //               color: theme.colorScheme.inversePrimary,
+  //               size: 20.w,
+  //             ),
+  //             SizedBox(width: 12.w),
+  //             Expanded(
+  //               child: Text(
+  //                 title,
+  //                 style: TextStyle(
+  //                   color: theme.colorScheme.inversePrimary,
+  //                   fontSize: 16.sp,
+  //                   fontWeight: FontWeight.w500,
+  //                   fontFamily: 'Urbanist',
+  //                 ),
+  //               ),
+  //             ),
+  //             Icon(
+  //               Icons.chevron_right,
+  //               color: theme.colorScheme.inversePrimary,
+  //               size: 20.w,
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget _buildProfileNotFound() {
     return Center(

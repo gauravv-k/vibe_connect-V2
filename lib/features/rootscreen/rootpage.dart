@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:vibe_connect/features/ai_meet/testui/join_screen.dart';
+import 'package:vibe_connect/features/ai_meet/ui/askjoin.dart';
+import 'package:vibe_connect/features/ai_meet/ui/home_page.dart';
+import 'package:vibe_connect/features/ai_meet/ui/meet_page.dart';
 import 'package:vibe_connect/features/storage/storage.dart';
 import 'package:vibe_connect/features/ai_image/presentation/pages/image_generation_page.dart';
 import 'package:vibe_connect/features/profile/profile_page.dart';
@@ -12,12 +15,12 @@ class RootPage extends StatefulWidget {
 }
 
 class _RootPageState extends State<RootPage> {
-  int _selectedIndex = 0; // AI meet is selected by default
+  int _selectedIndex = 1; // AI meet is selected by default
 
   // Commented out navigation screens as requested
   final List<Widget> _screens = [
     const ImageGenerationPage(),
-           JoinScreen(),
+           HomePage(),
     const StoragePage(),
     const ProfilePage(),
 
@@ -48,8 +51,8 @@ class _RootPageState extends State<RootPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildNavItem(0, 'zoom.png', 'Ai Meet'),
-                _buildNavItem(1, 'zoom.png', 'Studio'),
+                _buildNavItem(0, 'image.png', 'Ai Image'),
+                _buildNavItem(1, 'zoom.png', 'Meet'),
                 _buildNavItem(2, 'folder.png', 'Storage'),
                 _buildNavItem(3, 'user.png', 'Profile'),
               ],

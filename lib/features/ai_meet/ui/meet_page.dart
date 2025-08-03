@@ -1,18 +1,114 @@
-
 import 'dart:ui';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:vibe_connect/features/ai_meet/testui/participant_tile.dart';
+import 'package:videosdk/videosdk.dart';
+
 
 class MeetPage extends StatefulWidget {
-  const MeetPage({super.key});
+  final String meetingId;
+  final String token;
+  const MeetPage({super.key, required this.meetingId, required this.token});
 
   @override
   State<MeetPage> createState() => _MeetPageState();
 }
 
-class _MeetPageState extends State<MeetPage> {
+class _MeetPageState extends State<MeetPage> with WidgetsBindingObserver {
   bool isMicMuted = false;
   bool isCameraOff = false;
   bool isDreamBoardOn = false;
+
+  late Room _room;
+  Map<String, Participant> participants = {};
+
+  // Event listener callbacks
+  void onRoomJoined() {
+    setState(() {
+      participants.putIfAbsent(
+        _room.localParticipant.id,
+        () => _room.localParticipant,
+      );
+    });
+  }
+
+  void onParticipantJoined(Participant participant) {
+    setState(() {
+      participants.putIfAbsent(participant.id, () => participant);
+    });
+  }
+
+  void onParticipantLeft(String participantId) {
+    setState(() {
+      participants.remove(participantId);
+    });
+  }
+
+  void onRoomLeft() {
+    participants.clear();
+    Navigator.pop(context);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+
+    _room = VideoSDK.createRoom(
+      roomId: widget.meetingId,
+      token: widget.token,
+      displayName: "John Doe",
+      micEnabled: !isMicMuted,
+      camEnabled: !isCameraOff,
+      defaultCameraIndex: kIsWeb ? 0 : 1,
+    );
+
+    setMeetingEventListener();
+    _room.join();
+  }
+
+  @override
+  void dispose() {
+    _room.leave();
+    _room.off(Events.roomJoined, onRoomJoined);
+    _room.off(Events.participantJoined, onParticipantJoined);
+    _room.off(Events.participantLeft, onParticipantLeft);
+    _room.off(Events.roomLeft, onRoomLeft);
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) { // not letting frezz the stream
+    super.didChangeAppLifecycleState(state);
+    switch (state) {
+      case AppLifecycleState.resumed:
+        if (!isCameraOff) {
+          _room.enableCam();
+        }
+        break;
+      case AppLifecycleState.paused:
+        _room.disableCam();
+        break;
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.detached:
+      case AppLifecycleState.hidden:
+        break;
+    }
+  }
+
+  void setMeetingEventListener() {
+    _room.on(Events.roomJoined, onRoomJoined);
+    _room.on(Events.participantJoined, onParticipantJoined);
+    _room.on(Events.participantLeft, onParticipantLeft);
+    _room.on(Events.roomLeft, onRoomLeft);
+  }
+
+  void _leaveMeeting() {
+    Navigator.pop(context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,15 +116,90 @@ class _MeetPageState extends State<MeetPage> {
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          // Remote user's video stream (placeholder)
-          Positioned.fill(
-            child: Image.network(
-              'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&q=80',
-              fit: BoxFit.cover,
-            ),
+          // Remote user's video stream (or placeholder)
+                   Positioned.fill(
+            child: participants.length > 1
+                ? ParticipantTile(
+                    participant:
+                        participants.values.firstWhere((p) => !p.isLocal))
+                : Center(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 50.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Text(
+                            "You're the only one here",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 24,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          const Text(
+                            'Share this meeting link with others that you want in the meeting',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: Colors.white70, fontSize: 16),
+                          ),
+                          const SizedBox(height: 30),
+                          // Meeting link box
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 14),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF3c4043),
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  widget.meetingId,
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    Clipboard.setData(
+                                        ClipboardData(text: widget.meetingId));
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content:
+                                              Text('Link copied to clipboard')),
+                                    );
+                                  },
+                                  child: const Icon(Icons.copy_outlined,
+                                      color: Colors.white, size: 20),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          // Share invite button
+                          ElevatedButton.icon(
+                            onPressed: () {
+                              Share.share(widget.meetingId);
+                            },
+                            icon: const Icon(Icons.share, size: 20),
+                            label: const Text('Share invite'),
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.black,
+                              backgroundColor: const Color(0xFFa8c7fa),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(24),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 24, vertical: 12),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
           ),
 
-          // Local user's video stream (placeholder)
+          // Local user's video stream (or placeholder)
           Positioned(
             top: 40,
             right: 20,
@@ -37,10 +208,12 @@ class _MeetPageState extends State<MeetPage> {
               height: 180,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12.0),
-                child: Image.network(
-                  'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80',
-                  fit: BoxFit.cover,
-                ),
+                child: participants.isNotEmpty
+                    ? ParticipantTile(participant: _room.localParticipant)
+                    : Image.network(
+                        'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80',
+                        fit: BoxFit.cover,
+                      ),
               ),
             ),
           ),
@@ -51,43 +224,24 @@ class _MeetPageState extends State<MeetPage> {
             left: 20,
             child: Row(
               children: [
-                // Back button
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.5),
-                    shape: BoxShape.circle,
-                  ),
-                  child: IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Colors.white),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    }, // Back functionality
-                  ),
-                ),
+                _buildTopIcon(Icons.arrow_back, () {
+                  Navigator.pop(context);
+                }),
                 const SizedBox(width: 15),
-                // Speaker button
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.5),
-                    shape: BoxShape.circle,
-                  ),
-                  child: IconButton(
-                    icon: const Icon(Icons.volume_up, color: Colors.white),
-                    onPressed: () {}, // Speaker selection functionality
-                  ),
-                ),
+                _buildTopIcon(Icons.volume_up, () {
+                  // TODO: Speaker toggle logic (optional)
+                }),
                 const SizedBox(width: 15),
-                // Switch camera button
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.5),
-                    shape: BoxShape.circle,
-                  ),
-                  child: IconButton(
-                    icon: const Icon(Icons.flip_camera_ios, color: Colors.white),
-                    onPressed: () {}, // Switch camera functionality
-                  ),
-                ),
+                _buildTopIcon(Icons.flip_camera_ios, () async {
+                  final devices = await VideoSDK.getVideoDevices();
+                  if (devices!.length > 1) {
+                    final current = _room.selectedCamId;
+                    final other = devices.firstWhere(
+                        (d) => d.deviceId != current,
+                        orElse: () => devices.first);
+                    _room.changeCam(other);
+                  }
+                }),
               ],
             ),
           ),
@@ -104,12 +258,11 @@ class _MeetPageState extends State<MeetPage> {
                 child: Container(
                   padding: const EdgeInsets.all(15.0),
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.2),
+                    color: Colors.grey.withOpacity(0.2),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      // Mute/Unmute Mic Button
                       _buildControlButton(
                         icon: isMicMuted ? Icons.mic_off : Icons.mic,
                         label: isMicMuted ? 'Unmute' : 'Mute',
@@ -118,24 +271,30 @@ class _MeetPageState extends State<MeetPage> {
                           setState(() {
                             isMicMuted = !isMicMuted;
                           });
+                          isMicMuted ? _room.muteMic() : _room.unmuteMic();
                         },
-                      ),                      
-                      // Turn Camera Off/On Button
+                      ),
                       _buildControlButton(
-                        icon: isCameraOff ? Icons.videocam_off : Icons.videocam,
+                        icon:
+                            isCameraOff ? Icons.videocam_off : Icons.videocam,
                         label: isCameraOff ? 'Cam On' : 'Cam Off',
                         backgroundColor: Colors.white.withOpacity(0.3),
                         onTap: () {
                           setState(() {
                             isCameraOff = !isCameraOff;
                           });
+                          isCameraOff
+                              ? _room.disableCam()
+                              : _room.enableCam();
                         },
                       ),
-                      
-                      // Dream board button
                       _buildControlButton(
-                        icon: isDreamBoardOn ? Icons.image_not_supported_rounded : Icons.image,
-                        label: isDreamBoardOn ? 'DreamBoard On' : 'DreamBoard Off',
+                        icon: isDreamBoardOn
+                            ? Icons.image_not_supported_rounded
+                            : Icons.image,
+                        label: isDreamBoardOn
+                            ? 'DreamBoard On'
+                            : 'DreamBoard Off',
                         backgroundColor: Colors.white.withOpacity(0.3),
                         onTap: () {
                           setState(() {
@@ -143,13 +302,11 @@ class _MeetPageState extends State<MeetPage> {
                           });
                         },
                       ),
-
-                      // End Call Button
                       _buildControlButton(
                         icon: Icons.call_end,
                         label: 'Leave',
                         backgroundColor: Colors.red,
-                        onTap: () {}, // End call functionality
+                        onTap: _leaveMeeting,
                       ),
                     ],
                   ),
@@ -158,6 +315,19 @@ class _MeetPageState extends State<MeetPage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildTopIcon(IconData icon, VoidCallback onTap) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.black.withOpacity(0.5),
+        shape: BoxShape.circle,
+      ),
+      child: IconButton(
+        icon: Icon(icon, color: Colors.white),
+        onPressed: onTap,
       ),
     );
   }
