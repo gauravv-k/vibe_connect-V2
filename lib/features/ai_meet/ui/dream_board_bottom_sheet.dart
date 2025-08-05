@@ -16,109 +16,108 @@ class DreamBoardBottomSheet extends StatefulWidget {
 }
 
 class _DreamBoardBottomSheetState extends State<DreamBoardBottomSheet> {
-  bool isListening = false;
-  String prompt = "";
-  Timer? _promptCaptureTimer;
-  Timer? _autoStopTimer;
-  String _lastTranscription = "";
+  late final TextEditingController _promptController;
+  Timer? _imageGenerationTimer;
+  Timer? _transcriptionSyncTimer;
+  String _lastGeneratedPrompt = "";
+
+  @override
+  void initState() {
+    super.initState();
+    _promptController = TextEditingController(text: widget.getTranscription());
+    _startTimers();
+  }
 
   @override
   void dispose() {
-    _promptCaptureTimer?.cancel();
-    _autoStopTimer?.cancel();
+    _imageGenerationTimer?.cancel();
+    _transcriptionSyncTimer?.cancel();
+    _promptController.dispose();
     super.dispose();
   }
 
-  void _startListening() {
-    setState(() {
-      isListening = true;
-      prompt = "Listening...";
-      _lastTranscription = widget.getTranscription();
-    });
-
-    // Check for new transcription text frequently for a real-time feel
-    _promptCaptureTimer =
-        Timer.periodic(const Duration(milliseconds: 200), (timer) {
+  void _startTimers() {
+    // Timer to sync transcription with the text field.
+    // This provides the "live text" feel.
+    _transcriptionSyncTimer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
       final currentTranscription = widget.getTranscription();
-      if (currentTranscription.length > _lastTranscription.length) {
-        final newText =
-            currentTranscription.substring(_lastTranscription.length).trim();
-        if (newText.isNotEmpty) {
-          setState(() {
-            prompt = (prompt == "Listening...") ? newText : "$prompt $newText";
-          });
-        }
-      }
-      _lastTranscription = currentTranscription;
-    });
-
-    // Automatically stop listening after 10 seconds
-    _autoStopTimer = Timer(const Duration(seconds: 10), () {
-      if (isListening) {
-        _stopListening();
+      if (currentTranscription != _promptController.text) {
+        setState(() {
+          _promptController.text = currentTranscription;
+        });
       }
     });
-  }
 
-  void _stopListening() {
-    _promptCaptureTimer?.cancel();
-    _autoStopTimer?.cancel();
-    setState(() {
-      isListening = false;
+    // Timer to generate images every 5 seconds.
+    _imageGenerationTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      final currentPrompt = _promptController.text.trim();
+      
+      // Generate image only if the prompt is new and not empty.
+      // This prevents redundant API calls for the same text.
+      if (currentPrompt.isNotEmpty && currentPrompt != _lastGeneratedPrompt) {
+        context.read<ImageCubit>().generateImage(currentPrompt);
+        // Store the last prompt that was sent for generation.
+        _lastGeneratedPrompt = currentPrompt;
+      }
     });
-    if (prompt.isNotEmpty && prompt != "Listening...") {
-      context.read<ImageCubit>().generateImage(prompt);
-    } else {
-      setState(() {
-        prompt = "No speech detected.";
-      });
-    }
   }
 
   @override
   Widget build(BuildContext context) {
+    // Using Padding with viewInsets to ensure the keyboard doesn't cover the sheet.
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, MediaQuery.of(context).viewInsets.bottom + 16.0),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            isListening ? "Listening..." : "Tap mic to speak",
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          const Text(
+            "Dream Board",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 10),
-          IconButton(
-            icon: Icon(isListening ? Icons.mic : Icons.mic_none, size: 40),
-            onPressed: isListening ? _stopListening : _startListening,
+          const SizedBox(height: 8),
+          const Text(
+            "Generating images from the conversation every 5 seconds.",
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 14, color: Colors.grey),
           ),
-          const SizedBox(height: 10),
-          if (prompt.isNotEmpty)
-            Container(
-              width: MediaQuery.of(context).size.width * 0.8,
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(prompt, textAlign: TextAlign.center),
+          const SizedBox(height: 16),
+          TextField(
+            controller: _promptController,
+            decoration: const InputDecoration(
+              labelText: "Live Prompt",
+              border: OutlineInputBorder(),
+              hintText: "Your conversation will appear here...",
             ),
+            maxLines: 3,
+          ),
           const SizedBox(height: 20),
           SizedBox(
-            height: 200,
+            height: 250,
+            width: double.infinity,
             child: BlocBuilder<ImageCubit, ImageState>(
               builder: (context, state) {
                 if (state is ImageLoading) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (state is ImageLoaded) {
-                  return Image.memory(state.image);
-                } else if (state is ImageError) {
-                  print('Message: ${state.message}');
-                  return Center(
-                  child: const Text('Something went wrong.'),
+                  return ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.memory(state.image, fit: BoxFit.cover),
                   );
+                } else if (state is ImageError) {
+                  return const Center(child: Text('Error generating image.'));
                 } else {
-                  return const Center(
-                      child: Text('Generated image will appear here.'));
+                  return Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        'Images will appear here...',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    ),
+                  );
                 }
               },
             ),

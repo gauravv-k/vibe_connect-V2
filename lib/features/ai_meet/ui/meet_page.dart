@@ -9,6 +9,7 @@ import 'package:vibe_connect/features/ai_meet/ui/dream_board_bottom_sheet.dart';
 import 'package:vibe_connect/features/ai_meet/ui/participant_tile.dart';
 import 'package:videosdk/videosdk.dart';
 import 'package:android_pip/android_pip.dart';
+import 'package:videosdk/videosdk.dart';
 
 class MeetPage extends StatefulWidget {
   final String meetingId;
@@ -32,7 +33,7 @@ class _MeetPageState extends State<MeetPage> with WidgetsBindingObserver {
 
   // Event listener callbacks
   void onRoomJoined() {
-    _room.startTranscription(); // Automatically start transcription on join
+    _room.startTranscription();
     setState(() {
       participants.putIfAbsent(
         _room.localParticipant.id,
@@ -145,8 +146,7 @@ class _MeetPageState extends State<MeetPage> with WidgetsBindingObserver {
         backgroundColor: Colors.black,
         body: participants.length > 1
             ? ParticipantTile(
-                participant:
-                    participants.values.firstWhere((p) => !p.isLocal),
+                participant: participants.values.firstWhere((p) => !p.isLocal),
                 mirror: false,
               )
             : const SizedBox.shrink(),
@@ -182,7 +182,8 @@ class _MeetPageState extends State<MeetPage> with WidgetsBindingObserver {
                           const Text(
                             'Share this meeting link with others that you want in the meeting',
                             textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.white70, fontSize: 16),
+                            style:
+                                TextStyle(color: Colors.white70, fontSize: 16),
                           ),
                           const SizedBox(height: 30),
                           Container(
@@ -246,7 +247,10 @@ class _MeetPageState extends State<MeetPage> with WidgetsBindingObserver {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12.0),
                 child: participants.isNotEmpty
-                    ? ParticipantTile(participant: _room.localParticipant, mirror: !isRearCamera,)
+                    ? ParticipantTile(
+                        participant: _room.localParticipant,
+                        mirror: !isRearCamera,
+                      )
                     : Image.network(
                         'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80',
                         fit: BoxFit.cover,
@@ -265,7 +269,8 @@ class _MeetPageState extends State<MeetPage> with WidgetsBindingObserver {
                     _isInPipMode = true;
                   });
                   try {
-                    final success = await _androidPip.enterPipMode(aspectRatio: const [16, 9]);
+                    final success = await _androidPip
+                        .enterPipMode(aspectRatio: const [16, 9]);
                     if (!success) {
                       setState(() {
                         _isInPipMode = false;
@@ -329,30 +334,27 @@ class _MeetPageState extends State<MeetPage> with WidgetsBindingObserver {
                         },
                       ),
                       _buildControlButton(
-                        icon:
-                            isCameraOff ? Icons.videocam_off : Icons.videocam,
+                        icon: isCameraOff ? Icons.videocam_off : Icons.videocam,
                         label: isCameraOff ? 'Cam On' : 'Cam Off',
                         backgroundColor: Colors.white.withOpacity(0.3),
                         onTap: () {
                           setState(() {
                             isCameraOff = !isCameraOff;
                           });
-                          isCameraOff
-                              ? _room.disableCam()
-                              : _room.enableCam();
+                          isCameraOff ? _room.disableCam() : _room.enableCam();
                         },
                       ),
                       _buildControlButton(
                         icon: isDreamBoardOn
                             ? Icons.image_not_supported_rounded
                             : Icons.image,
-                        label: isDreamBoardOn
-                            ? 'DreamBoard On'
-                            : 'DreamBoard Off',
+                        label:
+                            isDreamBoardOn ? 'DreamBoard On' : 'DreamBoard Off',
                         backgroundColor: Colors.white.withOpacity(0.3),
                         onTap: () {
                           showModalBottomSheet(
                             context: context,
+                            isScrollControlled: true,
                             builder: (context) => BlocProvider(
                               create: (context) => ImageCubit(),
                               child: DreamBoardBottomSheet(
