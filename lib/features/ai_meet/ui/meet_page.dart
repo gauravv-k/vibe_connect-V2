@@ -21,6 +21,7 @@ class _MeetPageState extends State<MeetPage> with WidgetsBindingObserver {
   bool isMicMuted = false;
   bool isCameraOff = false;
   bool isDreamBoardOn = false;
+  bool isRearCamera = false;
   bool _isInPipMode = false;
   final _androidPip = AndroidPIP();
   late Room _room;
@@ -43,9 +44,15 @@ class _MeetPageState extends State<MeetPage> with WidgetsBindingObserver {
   }
 
   void onParticipantLeft(String participantId) {
-    setState(() {
-      participants.remove(participantId);
-    });
+    if (participants.containsKey(participantId)) {
+      // final participant = participants[participantId]!;
+      // participant.streams.values.forEach((stream) {
+      //    stream.track.stop();
+      // });
+      setState(() {
+        participants.remove(participantId);
+      });
+    }
   }
 
   void onRoomLeft() {
@@ -73,6 +80,14 @@ class _MeetPageState extends State<MeetPage> with WidgetsBindingObserver {
 
   @override
   void dispose() {
+    // Clean up all participant resources
+    // for (final participant in participants.values) {
+    //   participant.streams.values.forEach((stream) {
+    //     stream.track.dispose();
+    //   });
+    // }
+    participants.clear();
+
     _room.leave();
     _room.off(Events.roomJoined, onRoomJoined);
     _room.off(Events.participantJoined, onParticipantJoined);
@@ -87,11 +102,13 @@ class _MeetPageState extends State<MeetPage> with WidgetsBindingObserver {
     super.didChangeAppLifecycleState(state);
     switch (state) {
       case AppLifecycleState.resumed:
-        if (mounted) {
-          setState(() {
-            _isInPipMode = false;
-          });
-        }
+        Future.delayed(const Duration(milliseconds: 300), () {
+          if (mounted) {
+            setState(() {
+              _isInPipMode = false;
+            });
+          }
+        });
         if (!isCameraOff) {
           _room.enableCam();
         }
@@ -127,7 +144,9 @@ class _MeetPageState extends State<MeetPage> with WidgetsBindingObserver {
         body: participants.length > 1
             ? ParticipantTile(
                 participant:
-                    participants.values.firstWhere((p) => !p.isLocal))
+                    participants.values.firstWhere((p) => !p.isLocal),
+                mirror: false,
+              )
             : const SizedBox.shrink(),
       );
     }
@@ -140,7 +159,9 @@ class _MeetPageState extends State<MeetPage> with WidgetsBindingObserver {
             child: participants.length > 1
                 ? ParticipantTile(
                     participant:
-                        participants.values.firstWhere((p) => !p.isLocal))
+                        participants.values.firstWhere((p) => !p.isLocal),
+                    mirror: true,
+                  )
                 : Center(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 50.0),
@@ -228,7 +249,7 @@ class _MeetPageState extends State<MeetPage> with WidgetsBindingObserver {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12.0),
                 child: participants.isNotEmpty
-                    ? ParticipantTile(participant: _room.localParticipant)
+                    ? ParticipantTile(participant: _room.localParticipant, mirror: !isRearCamera,)
                     : Image.network(
                         'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80',
                         fit: BoxFit.cover,
@@ -277,6 +298,9 @@ class _MeetPageState extends State<MeetPage> with WidgetsBindingObserver {
                         (d) => d.deviceId != current,
                         orElse: () => devices.first);
                     _room.changeCam(other);
+                    setState(() {
+                      isRearCamera = !isRearCamera;
+                    });
                   }
                 }),
               ],

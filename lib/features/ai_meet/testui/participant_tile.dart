@@ -3,7 +3,9 @@ import 'package:videosdk/videosdk.dart';
 
 class ParticipantTile extends StatefulWidget {
   final Participant participant;
-  const ParticipantTile({super.key, required this.participant});
+  final bool mirror;
+  const ParticipantTile(
+      {super.key, required this.participant, this.mirror = false});
 
   @override
   State<ParticipantTile> createState() => _ParticipantTileState();
@@ -54,6 +56,7 @@ class _ParticipantTileState extends State<ParticipantTile> {
       child: videoStream != null
           ? RTCVideoView(
               videoStream?.renderer as RTCVideoRenderer,
+              mirror: widget.mirror,
               objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
             )
           : Container(
