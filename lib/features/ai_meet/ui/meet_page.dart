@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:vibe_connect/features/ai_meet/testui/participant_tile.dart';
 import 'package:videosdk/videosdk.dart';
+import 'package:android_pip/android_pip.dart';
 
 
 class MeetPage extends StatefulWidget {
@@ -20,7 +21,8 @@ class _MeetPageState extends State<MeetPage> with WidgetsBindingObserver {
   bool isMicMuted = false;
   bool isCameraOff = false;
   bool isDreamBoardOn = false;
-
+  bool _isInPipMode = false;
+  final _androidPip = AndroidPIP();
   late Room _room;
   Map<String, Participant> participants = {};
 
@@ -85,12 +87,19 @@ class _MeetPageState extends State<MeetPage> with WidgetsBindingObserver {
     super.didChangeAppLifecycleState(state);
     switch (state) {
       case AppLifecycleState.resumed:
+        if (mounted) {
+          setState(() {
+            _isInPipMode = false;
+          });
+        }
         if (!isCameraOff) {
           _room.enableCam();
         }
         break;
       case AppLifecycleState.paused:
-        _room.disableCam();
+        if (!_isInPipMode) {
+          _room.disableCam();
+        }
         break;
       case AppLifecycleState.inactive:
       case AppLifecycleState.detached:
@@ -112,12 +121,22 @@ class _MeetPageState extends State<MeetPage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    if (_isInPipMode) {
+      return Scaffold(
+        backgroundColor: Colors.black,
+        body: participants.length > 1
+            ? ParticipantTile(
+                participant:
+                    participants.values.firstWhere((p) => !p.isLocal))
+            : const SizedBox.shrink(),
+      );
+    }
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
         children: [
           // Remote user's video stream (or placeholder)
-                   Positioned.fill(
+          Positioned.fill(
             child: participants.length > 1
                 ? ParticipantTile(
                     participant:
@@ -224,8 +243,26 @@ class _MeetPageState extends State<MeetPage> with WidgetsBindingObserver {
             left: 20,
             child: Row(
               children: [
-                _buildTopIcon(Icons.arrow_back, () {
-                  Navigator.pop(context);
+                _buildTopIcon(Icons.arrow_back, () async {
+                  if (defaultTargetPlatform != TargetPlatform.android) return;
+                  setState(() {
+                    _isInPipMode = true;
+                  });
+                  try {
+                    final success = await _androidPip.enterPipMode(aspectRatio: const [16, 9]);
+                    if (!success) {
+                      setState(() {
+                        _isInPipMode = false;
+                      });
+                      if (context.mounted) Navigator.pop(context);
+                    }
+                  } catch (e) {
+                    setState(() {
+                      _isInPipMode = false;
+                    });
+                    debugPrint('Error entering PIP mode: $e');
+                    if (context.mounted) Navigator.pop(context);
+                  }
                 }),
                 const SizedBox(width: 15),
                 _buildTopIcon(Icons.volume_up, () {

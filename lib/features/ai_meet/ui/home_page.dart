@@ -88,51 +88,59 @@ class _HomePageState extends State<HomePage> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(10.0),
           child: Column(
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  ElevatedButton(
-                    onPressed: () => _onCreateMeeting(context),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () => _onCreateMeeting(context),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
                       ),
-                    ),
-                    child: const Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 15.0, vertical: 10.0),
-                      child: Text('New meeting'),
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 12.0),
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text('New meeting'),
+                        ),
+                      ),
                     ),
                   ),
-                  OutlinedButton(
-                    onPressed: () {
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true, // Important for custom height
-                        shape: const RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.vertical(top: Radius.circular(20)),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () {
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true, // Important for custom height
+                          shape: const RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.vertical(top: Radius.circular(20)),
+                          ),
+                          builder: (context) => FractionallySizedBox(
+                            heightFactor: 0.9, // Covers 80% of screen height
+                            child: const JoiningPage(), // Your content here
+                          ),
+                        );
+                      },
+                      style: OutlinedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
                         ),
-                        builder: (context) => FractionallySizedBox(
-                          heightFactor: 0.9, // Covers 80% of screen height
-                          child: const JoiningPage(), // Your content here
-                        ),
-                      );
-                    },
-                    style: OutlinedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
                       ),
-                    ),
-                    child: const Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 15.0, vertical: 10.0),
-                      child: Text('Join a meeting'),
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 12.0),
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text('Join a meeting'),
+                        ),
+                      ),
                     ),
                   ),
                 ],

@@ -43,6 +43,7 @@ dependencies:
   http: ^1.4.0
   videosdk: ^2.3.1
   share_plus: ^11.0.0
+  android_pip: ^2.0.1
   
 
 dev_dependencies:
