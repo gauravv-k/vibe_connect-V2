@@ -18,11 +18,14 @@ class DreamBoardBottomSheet extends StatefulWidget {
 class _DreamBoardBottomSheetState extends State<DreamBoardBottomSheet> {
   bool isListening = false;
   String prompt = "";
-  Timer? _timer;
+  Timer? _promptCaptureTimer;
+  Timer? _autoStopTimer;
+  String _lastTranscription = "";
 
   @override
   void dispose() {
-    _timer?.cancel();
+    _promptCaptureTimer?.cancel();
+    _autoStopTimer?.cancel();
     super.dispose();
   }
 
@@ -30,39 +33,46 @@ class _DreamBoardBottomSheetState extends State<DreamBoardBottomSheet> {
     setState(() {
       isListening = true;
       prompt = "Listening...";
+      _lastTranscription = widget.getTranscription();
     });
 
-    final startTranscription = widget.getTranscription();
+    // Check for new transcription text frequently for a real-time feel
+    _promptCaptureTimer =
+        Timer.periodic(const Duration(milliseconds: 200), (timer) {
+      final currentTranscription = widget.getTranscription();
+      if (currentTranscription.length > _lastTranscription.length) {
+        final newText =
+            currentTranscription.substring(_lastTranscription.length).trim();
+        if (newText.isNotEmpty) {
+          setState(() {
+            prompt = (prompt == "Listening...") ? newText : "$prompt $newText";
+          });
+        }
+      }
+      _lastTranscription = currentTranscription;
+    });
 
-    _timer = Timer(const Duration(seconds: 10), () {
+    // Automatically stop listening after 10 seconds
+    _autoStopTimer = Timer(const Duration(seconds: 10), () {
       if (isListening) {
         _stopListening();
-        final endTranscription = widget.getTranscription();
-        String generatedPrompt = "";
-        if (endTranscription.length > startTranscription.length) {
-          generatedPrompt =
-              endTranscription.substring(startTranscription.length).trim();
-        }
-
-        if (generatedPrompt.isNotEmpty) {
-          setState(() {
-            prompt = generatedPrompt;
-          });
-          context.read<ImageCubit>().generateImage(generatedPrompt);
-        } else {
-          setState(() {
-            prompt = "No speech detected.";
-          });
-        }
       }
     });
   }
 
   void _stopListening() {
+    _promptCaptureTimer?.cancel();
+    _autoStopTimer?.cancel();
     setState(() {
       isListening = false;
     });
-    _timer?.cancel();
+    if (prompt.isNotEmpty && prompt != "Listening...") {
+      context.read<ImageCubit>().generateImage(prompt);
+    } else {
+      setState(() {
+        prompt = "No speech detected.";
+      });
+    }
   }
 
   @override
@@ -79,17 +89,18 @@ class _DreamBoardBottomSheetState extends State<DreamBoardBottomSheet> {
           const SizedBox(height: 10),
           IconButton(
             icon: Icon(isListening ? Icons.mic : Icons.mic_none, size: 40),
-            onPressed: isListening ? null : _startListening,
+            onPressed: isListening ? _stopListening : _startListening,
           ),
           const SizedBox(height: 10),
           if (prompt.isNotEmpty)
             Container(
+              width: MediaQuery.of(context).size.width * 0.8,
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: Colors.grey[200],
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Text(prompt),
+              child: Text(prompt, textAlign: TextAlign.center),
             ),
           const SizedBox(height: 20),
           SizedBox(
@@ -101,7 +112,10 @@ class _DreamBoardBottomSheetState extends State<DreamBoardBottomSheet> {
                 } else if (state is ImageLoaded) {
                   return Image.memory(state.image);
                 } else if (state is ImageError) {
-                  return Center(child: Text(state.message));
+                  print('Message: ${state.message}');
+                  return Center(
+                  child: const Text('Something went wrong.'),
+                  );
                 } else {
                   return const Center(
                       child: Text('Generated image will appear here.'));
