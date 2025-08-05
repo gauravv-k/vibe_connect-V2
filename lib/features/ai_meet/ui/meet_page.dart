@@ -354,10 +354,16 @@ class _MeetPageState extends State<MeetPage> with WidgetsBindingObserver {
                           showModalBottomSheet(
                             context: context,
                             isScrollControlled: true,
-                            builder: (context) => BlocProvider(
-                              create: (context) => ImageCubit(),
-                              child: DreamBoardBottomSheet(
-                                getTranscription: () => transcriptionText,
+                            // backgroundColor: Colors
+                            //     .transparent, // Optional: makes rounded corners look better
+                            builder: (context) => FractionallySizedBox(
+                              heightFactor:
+                                  0.8, // 70% of screen height
+                              child: BlocProvider(
+                                create: (context) => ImageCubit(),
+                                child: DreamBoardBottomSheet(
+                                  getTranscription: () => transcriptionText,
+                                ),
                               ),
                             ),
                           );

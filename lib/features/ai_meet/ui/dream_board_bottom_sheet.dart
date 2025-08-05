@@ -73,74 +73,76 @@ class _DreamBoardBottomSheetState extends State<DreamBoardBottomSheet> {
       ),
       child: Padding(
         padding: EdgeInsets.fromLTRB(
-            4.0, 4.0, 4.0, MediaQuery.of(context).viewInsets.bottom + 10.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Lottie.asset('assets/images/Wave Loop.json',
-                height: 200, width: double.infinity),
-            const SizedBox(height: 4),
-            TextField(
-              controller: _promptController,
-              decoration: InputDecoration(
-                labelText: "Live Prompt",
-                labelStyle: const TextStyle(color: Colors.white70),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: Colors.white24),
+            8.0, 8.0, 8.0, MediaQuery.of(context).viewInsets.bottom + 10.0),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Lottie.asset('assets/images/Wave Loop.json',
+                  height: 190, width: double.infinity),
+              const SizedBox(height: 8),
+              TextField(
+                controller: _promptController,
+                decoration: InputDecoration(
+                  labelText: "Live Prompt",
+                  labelStyle: const TextStyle(color: Colors.white70),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: Colors.white24),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: Colors.white24),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                        color: Theme.of(context).colorScheme.primary, width: 2),
+                  ),
+                  hintText: "Your conversation will appear here...",
+                  hintStyle: const TextStyle(color: Colors.white38),
                 ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: Colors.white24),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(
-                      color: Theme.of(context).colorScheme.primary, width: 2),
-                ),
-                hintText: "Your conversation will appear here...",
-                hintStyle: const TextStyle(color: Colors.white38),
+                style: const TextStyle(color: Colors.white),
+                maxLines: null, // Dynamic height
               ),
-              style: const TextStyle(color: Colors.white),
-              maxLines: null, // Dynamic height
-            ),
-            const SizedBox(height: 20),
-            SizedBox(
-              height: 250,
-              width: double.infinity,
-              child: BlocBuilder<ImageCubit, ImageState>(
-                builder: (context, state) {
-                  if (state is ImageLoading) {
-                    return Center(
-                        child: Lottie.asset('assets/images/Loading.json',
-                            height: 150));
-                  } else if (state is ImageLoaded) {
-                    return ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: Image.memory(state.image, fit: BoxFit.cover),
-                    );
-                  } else if (state is ImageError) {
-                    return const Center(
-                        child: Text('Try speaking louder and clear.!',
-                            style: TextStyle(color: Colors.redAccent)));
-                  }
-                  return Container(
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.3),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.white10),
-                    ),
-                    child: const Center(
-                      child: Text(
-                        'Images will appear here...',
-                        style: TextStyle(color: Colors.white54),
+              const SizedBox(height: 20),
+              SizedBox(
+                height: 250,
+                width: double.infinity,
+                child: BlocBuilder<ImageCubit, ImageState>(
+                  builder: (context, state) {
+                    if (state is ImageLoading) {
+                      return Center(
+                          child: Lottie.asset('assets/images/Loading.json',
+                              height: 150));
+                    } else if (state is ImageLoaded) {
+                      return ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.memory(state.image, fit: BoxFit.cover),
+                      );
+                    } else if (state is ImageError) {
+                      return const Center(
+                          child: Text('Try speaking louder and clear.!',
+                              style: TextStyle(color: Colors.redAccent)));
+                    }
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.3),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.white10),
                       ),
-                    ),
-                  );
-                },
+                      child: const Center(
+                        child: Text(
+                          'Images will appear here...',
+                          style: TextStyle(color: Colors.white54),
+                        ),
+                      ),
+                    );
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -158,7 +158,7 @@ class _HomePageState extends State<HomePage> {
                         children: [
                           Image.asset(
                             'assets/images/envelope.png',
-                            height: 150,
+                            height: 120,
                           ),
                           const SizedBox(height: 20),
                           const Text(
@@ -185,19 +185,19 @@ class _HomePageState extends State<HomePage> {
                       children: [
                         Image.asset(
                           'assets/images/zoom.png',
-                          height: 150,
+                          height: 120,
                         ),
                         const SizedBox(height: 20),
                         const Text(
                           'Get a link that you can share',
                           style: TextStyle(
-                            fontSize: 24,
+                            fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         const SizedBox(height: 10),
                         const Text(
-                          'Tap New meeting to get a link that you can send\nto people that you want to meet with',
+                          'Tap New meeting for the instant meet , or join the meet by id',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 16,
