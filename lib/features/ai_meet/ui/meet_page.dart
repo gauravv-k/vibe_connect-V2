@@ -2,11 +2,13 @@ import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:vibe_connect/features/ai_meet/testui/participant_tile.dart';
+import 'package:vibe_connect/features/ai_image/logic/cubit/image_cubit.dart';
+import 'package:vibe_connect/features/ai_meet/ui/dream_board_bottom_sheet.dart';
+import 'package:vibe_connect/features/ai_meet/ui/participant_tile.dart';
 import 'package:videosdk/videosdk.dart';
 import 'package:android_pip/android_pip.dart';
-
 
 class MeetPage extends StatefulWidget {
   final String meetingId;
@@ -21,6 +23,7 @@ class _MeetPageState extends State<MeetPage> with WidgetsBindingObserver {
   bool isMicMuted = false;
   bool isCameraOff = false;
   bool isDreamBoardOn = false;
+  String transcriptionText = "";
   bool isRearCamera = false;
   bool _isInPipMode = false;
   final _androidPip = AndroidPIP();
@@ -29,6 +32,7 @@ class _MeetPageState extends State<MeetPage> with WidgetsBindingObserver {
 
   // Event listener callbacks
   void onRoomJoined() {
+    _room.startTranscription(); // Automatically start transcription on join
     setState(() {
       participants.putIfAbsent(
         _room.localParticipant.id,
@@ -45,10 +49,6 @@ class _MeetPageState extends State<MeetPage> with WidgetsBindingObserver {
 
   void onParticipantLeft(String participantId) {
     if (participants.containsKey(participantId)) {
-      // final participant = participants[participantId]!;
-      // participant.streams.values.forEach((stream) {
-      //    stream.track.stop();
-      // });
       setState(() {
         participants.remove(participantId);
       });
@@ -58,6 +58,12 @@ class _MeetPageState extends State<MeetPage> with WidgetsBindingObserver {
   void onRoomLeft() {
     participants.clear();
     Navigator.pop(context);
+  }
+
+  void _onTranscription(dynamic transcription) {
+    setState(() {
+      transcriptionText = transcription.text;
+    });
   }
 
   @override
@@ -80,25 +86,20 @@ class _MeetPageState extends State<MeetPage> with WidgetsBindingObserver {
 
   @override
   void dispose() {
-    // Clean up all participant resources
-    // for (final participant in participants.values) {
-    //   participant.streams.values.forEach((stream) {
-    //     stream.track.dispose();
-    //   });
-    // }
+    _room.stopTranscription();
     participants.clear();
-
     _room.leave();
     _room.off(Events.roomJoined, onRoomJoined);
     _room.off(Events.participantJoined, onParticipantJoined);
     _room.off(Events.participantLeft, onParticipantLeft);
     _room.off(Events.roomLeft, onRoomLeft);
+    _room.off(Events.transcriptionText, _onTranscription);
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) { // not letting frezz the stream
+  void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     switch (state) {
       case AppLifecycleState.resumed:
@@ -130,6 +131,7 @@ class _MeetPageState extends State<MeetPage> with WidgetsBindingObserver {
     _room.on(Events.participantJoined, onParticipantJoined);
     _room.on(Events.participantLeft, onParticipantLeft);
     _room.on(Events.roomLeft, onRoomLeft);
+    _room.on(Events.transcriptionText, _onTranscription);
   }
 
   void _leaveMeeting() {
@@ -154,7 +156,6 @@ class _MeetPageState extends State<MeetPage> with WidgetsBindingObserver {
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          // Remote user's video stream (or placeholder)
           Positioned.fill(
             child: participants.length > 1
                 ? ParticipantTile(
@@ -184,7 +185,6 @@ class _MeetPageState extends State<MeetPage> with WidgetsBindingObserver {
                             style: TextStyle(color: Colors.white70, fontSize: 16),
                           ),
                           const SizedBox(height: 30),
-                          // Meeting link box
                           Container(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 16, vertical: 14),
@@ -216,7 +216,6 @@ class _MeetPageState extends State<MeetPage> with WidgetsBindingObserver {
                             ),
                           ),
                           const SizedBox(height: 20),
-                          // Share invite button
                           ElevatedButton.icon(
                             onPressed: () {
                               Share.share(widget.meetingId);
@@ -238,8 +237,6 @@ class _MeetPageState extends State<MeetPage> with WidgetsBindingObserver {
                     ),
                   ),
           ),
-
-          // Local user's video stream (or placeholder)
           Positioned(
             top: 40,
             right: 20,
@@ -257,8 +254,6 @@ class _MeetPageState extends State<MeetPage> with WidgetsBindingObserver {
               ),
             ),
           ),
-
-          // Top buttons
           Positioned(
             top: 50,
             left: 20,
@@ -306,8 +301,6 @@ class _MeetPageState extends State<MeetPage> with WidgetsBindingObserver {
               ],
             ),
           ),
-
-          // Bottom control buttons
           Positioned(
             bottom: 30,
             left: 15,
@@ -358,9 +351,15 @@ class _MeetPageState extends State<MeetPage> with WidgetsBindingObserver {
                             : 'DreamBoard Off',
                         backgroundColor: Colors.white.withOpacity(0.3),
                         onTap: () {
-                          setState(() {
-                            isDreamBoardOn = !isDreamBoardOn;
-                          });
+                          showModalBottomSheet(
+                            context: context,
+                            builder: (context) => BlocProvider(
+                              create: (context) => ImageCubit(),
+                              child: DreamBoardBottomSheet(
+                                getTranscription: () => transcriptionText,
+                              ),
+                            ),
+                          );
                         },
                       ),
                       _buildControlButton(
@@ -375,6 +374,21 @@ class _MeetPageState extends State<MeetPage> with WidgetsBindingObserver {
               ),
             ),
           ),
+          if (transcriptionText.isNotEmpty)
+            Positioned(
+              bottom: 120,
+              left: 0,
+              right: 0,
+              child: Container(
+                padding: const EdgeInsets.all(12),
+                color: Colors.white.withOpacity(0.8),
+                child: Text(
+                  transcriptionText,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: Colors.black),
+                ),
+              ),
+            ),
         ],
       ),
     );

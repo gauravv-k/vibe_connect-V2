@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:vibe_connect/features/ai_meet/testui/meeting_controls.dart';
+import 'package:vibe_connect/features/ai_meet/additional%20ui/testui/meeting_controls.dart';
 import 'package:videosdk/videosdk.dart';
-import './participant_tile.dart';
+import '../../ui/participant_tile.dart';
 
 class MeetingScreen extends StatefulWidget {
   final String meetingId;

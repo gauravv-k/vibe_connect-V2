@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:vibe_connect/features/ai_meet/testui/join_screen.dart';
-import 'package:vibe_connect/features/ai_meet/ui/askjoin.dart';
+import 'package:vibe_connect/features/ai_meet/additional%20ui/testui/join_screen.dart';
+import 'package:vibe_connect/features/ai_meet/additional%20ui/askjoin.dart';
 import 'package:vibe_connect/features/ai_meet/ui/home_page.dart';
 import 'package:vibe_connect/features/ai_meet/ui/meet_page.dart';
 import 'package:vibe_connect/features/storage/storage.dart';
