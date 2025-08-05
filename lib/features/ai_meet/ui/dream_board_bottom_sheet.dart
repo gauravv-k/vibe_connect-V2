@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lottie/lottie.dart';
 import 'package:vibe_connect/features/ai_image/logic/cubit/image_cubit.dart';
 
 class DreamBoardBottomSheet extends StatefulWidget {
@@ -37,9 +38,8 @@ class _DreamBoardBottomSheetState extends State<DreamBoardBottomSheet> {
   }
 
   void _startTimers() {
-    // Timer to sync transcription with the text field.
-    // This provides the "live text" feel.
-    _transcriptionSyncTimer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
+    _transcriptionSyncTimer =
+        Timer.periodic(const Duration(milliseconds: 500), (timer) {
       final currentTranscription = widget.getTranscription();
       if (currentTranscription != _promptController.text) {
         setState(() {
@@ -48,15 +48,10 @@ class _DreamBoardBottomSheetState extends State<DreamBoardBottomSheet> {
       }
     });
 
-    // Timer to generate images every 5 seconds.
     _imageGenerationTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
       final currentPrompt = _promptController.text.trim();
-      
-      // Generate image only if the prompt is new and not empty.
-      // This prevents redundant API calls for the same text.
       if (currentPrompt.isNotEmpty && currentPrompt != _lastGeneratedPrompt) {
         context.read<ImageCubit>().generateImage(currentPrompt);
-        // Store the last prompt that was sent for generation.
         _lastGeneratedPrompt = currentPrompt;
       }
     });
@@ -64,65 +59,89 @@ class _DreamBoardBottomSheetState extends State<DreamBoardBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    // Using Padding with viewInsets to ensure the keyboard doesn't cover the sheet.
-    return Padding(
-      padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, MediaQuery.of(context).viewInsets.bottom + 16.0),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Text(
-            "Dream Board",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            "Generating images from the conversation every 5 seconds.",
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 14, color: Colors.grey),
-          ),
-          const SizedBox(height: 16),
-          TextField(
-            controller: _promptController,
-            decoration: const InputDecoration(
-              labelText: "Live Prompt",
-              border: OutlineInputBorder(),
-              hintText: "Your conversation will appear here...",
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [const Color.fromARGB(255, 0, 0, 0), const Color.fromARGB(255, 195, 218, 253)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(24),
+          topRight: Radius.circular(24),
+        ),
+      ),
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(
+            4.0, 4.0, 4.0, MediaQuery.of(context).viewInsets.bottom + 10.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Lottie.asset('assets/images/Wave Loop.json',
+                height: 200, width: double.infinity),
+            const SizedBox(height: 4),
+            TextField(
+              controller: _promptController,
+              decoration: InputDecoration(
+                labelText: "Live Prompt",
+                labelStyle: const TextStyle(color: Colors.white70),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: Colors.white24),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: Colors.white24),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.primary, width: 2),
+                ),
+                hintText: "Your conversation will appear here...",
+                hintStyle: const TextStyle(color: Colors.white38),
+              ),
+              style: const TextStyle(color: Colors.white),
+              maxLines: null, // Dynamic height
             ),
-            maxLines: 3,
-          ),
-          const SizedBox(height: 20),
-          SizedBox(
-            height: 250,
-            width: double.infinity,
-            child: BlocBuilder<ImageCubit, ImageState>(
-              builder: (context, state) {
-                if (state is ImageLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (state is ImageLoaded) {
-                  return ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Image.memory(state.image, fit: BoxFit.cover),
-                  );
-                } else if (state is ImageError) {
-                  return const Center(child: Text('Error generating image.'));
-                } else {
+            const SizedBox(height: 20),
+            SizedBox(
+              height: 250,
+              width: double.infinity,
+              child: BlocBuilder<ImageCubit, ImageState>(
+                builder: (context, state) {
+                  if (state is ImageLoading) {
+                    return Center(
+                        child: Lottie.asset('assets/images/Loading.json',
+                            height: 150));
+                  } else if (state is ImageLoaded) {
+                    return ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.memory(state.image, fit: BoxFit.cover),
+                    );
+                  } else if (state is ImageError) {
+                    return const Center(
+                        child: Text('Try speaking louder and clear.!',
+                            style: TextStyle(color: Colors.redAccent)));
+                  }
                   return Container(
                     decoration: BoxDecoration(
-                      color: Colors.grey[200],
+                      color: Colors.black.withOpacity(0.3),
                       borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.white10),
                     ),
                     child: const Center(
                       child: Text(
                         'Images will appear here...',
-                        style: TextStyle(color: Colors.grey),
+                        style: TextStyle(color: Colors.white54),
                       ),
                     ),
                   );
-                }
-              },
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -9,7 +9,6 @@ import 'package:vibe_connect/features/ai_meet/ui/dream_board_bottom_sheet.dart';
 import 'package:vibe_connect/features/ai_meet/ui/participant_tile.dart';
 import 'package:videosdk/videosdk.dart';
 import 'package:android_pip/android_pip.dart';
-import 'package:videosdk/videosdk.dart';
 
 class MeetPage extends StatefulWidget {
   final String meetingId;

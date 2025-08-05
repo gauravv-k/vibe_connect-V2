@@ -45,6 +45,7 @@ dependencies:
   videosdk: ^2.3.1
   share_plus: ^11.0.0
   android_pip: ^2.0.1
+  lottie: ^3.3.0
   
 
 dev_dependencies:
