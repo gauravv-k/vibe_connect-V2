@@ -43,18 +43,18 @@ class _JoiningPageState extends State<JoiningPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF58A0C8),
+      backgroundColor: const Color.fromARGB(255, 205, 234, 249),
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         leading: Padding(
-          padding: const EdgeInsets.only(left: 8.0),
+          padding: const EdgeInsets.only(left: 10.0 ),
           child: TextButton(
             onPressed: () {
               Navigator.of(context).pop();
             },
             style: TextButton.styleFrom(
-              minimumSize: const Size(80, 60), // Ensures width for 'Cancel'
+              minimumSize : const Size(80, 60), // Ensures width for 'Cancel'
               padding: EdgeInsets.zero, // Avoid extra padding
             ),
             child: const Text(
@@ -63,10 +63,10 @@ class _JoiningPageState extends State<JoiningPage> {
             ),
           ),
         ),
-        titleSpacing: 20,
+        titleSpacing: 10,
         title: const Text(
           'Join with a code',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500),
         ),
         centerTitle: true,
         actions: [

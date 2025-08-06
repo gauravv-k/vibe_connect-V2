@@ -10,6 +10,15 @@ class StorageBloc extends Bloc<StorageEvent, StorageState> {
 
   StorageBloc() : super(StorageInitial()) {
     on<LoadMeetings>(_onLoadMeetings);
+    on<DeleteMeeting>(_onDeleteMeeting);
+  }
+
+  void _onDeleteMeeting(DeleteMeeting event, Emitter<StorageState> emit) async {
+    try {
+      await _firestore.collection('meetings').doc(event.meetingId).delete();
+    } catch (e) {
+      emit(StorageError(e.toString()));
+    }
   }
 
   void _onLoadMeetings(LoadMeetings event, Emitter<StorageState> emit) {

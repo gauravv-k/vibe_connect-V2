@@ -110,22 +110,49 @@ class _StoragePageState extends State<StoragePage> {
                               left: 20,
                               right: 20,
                               height: cardHeight,
-                              child: StorageTile(
-                                sessionTitle: meeting['title'],
-                                subtitle: '$formattedDate at $formattedTime',
-                                createdBy: createdBy,
-                                color: color,
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => AiStudioPage(
-                                        meetingData: meeting.data()
-                                            as Map<String, dynamic>,
-                                      ),
+                              child: Dismissible(
+                                key: Key(meeting.id),
+                                onDismissed: (direction) {
+                                  context
+                                      .read<StorageBloc>()
+                                      .add(DeleteMeeting(meeting.id));
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('${meeting['title']} deleted'),
                                     ),
                                   );
                                 },
+                                background: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.redAccent,
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: const Align(
+                                    alignment: Alignment.centerRight,
+                                    child: Padding(
+                                      padding: EdgeInsets.only(right: 20.0),
+                                      child: Icon(Icons.delete,
+                                          color: Colors.white),
+                                    ),
+                                  ),
+                                ),
+                                child: StorageTile(
+                                  sessionTitle: meeting['title'],
+                                  subtitle: '$formattedDate at $formattedTime',
+                                  createdBy: createdBy,
+                                  color: color,
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => AiStudioPage(
+                                          meetingData: meeting.data()
+                                              as Map<String, dynamic>,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
                               ),
                             );
                           }),

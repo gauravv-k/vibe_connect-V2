@@ -1,6 +1,7 @@
 // This file handles the main meeting UI, including video streams, participant management, and controls.
 // It integrates with the MeetingBloc to manage the meeting state and data flow.
 
+import 'dart:async';
 import 'dart:ui';
 import 'package:android_pip/android_pip.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -80,7 +81,7 @@ class _MeetPageState extends State<MeetPage> with WidgetsBindingObserver {
                 Navigator.pop(context);
               }
             },
-            child: const Text('Start'),
+            child: const Text('Start' , selectionColor: Colors.blue,),
           ),
         ],
       ),
@@ -117,10 +118,40 @@ class _MeetPageState extends State<MeetPage> with WidgetsBindingObserver {
     _showSaveDialog();
   }
 
+  Timer? _transcriptionTimer;
+  String _fullTranscription = "";
+  String _lastSentenceSegment = "";
+
   void _onTranscription(dynamic transcription) {
+    final String currentText = transcription.text;
+
+    // Always update the live caption for real-time feedback
     setState(() {
-      transcriptionText = transcription.text;
-      context.read<MeetingBloc>().add(UpdateTranscription(transcriptionText));
+      transcriptionText = currentText;
+    });
+
+    // Cancel any existing timer, as we have new data.
+    _transcriptionTimer?.cancel();
+
+    // Store the latest sentence segment.
+    _lastSentenceSegment = currentText;
+
+    // Start a timer. If it fires without being canceled, it means the user
+    // has paused, and we can consider this sentence segment final.
+    _transcriptionTimer = Timer(const Duration(milliseconds: 800), () {
+      if (_lastSentenceSegment.isNotEmpty) {
+        // Append the finalized sentence to the full transcript.
+        _fullTranscription =
+            (_fullTranscription + " " + _lastSentenceSegment).trim();
+
+        // Clear the segment to prevent it from being added again.
+        _lastSentenceSegment = "";
+
+        // Persist the updated full transcript to the database.
+        context
+            .read<MeetingBloc>()
+            .add(UpdateTranscription(_fullTranscription));
+      }
     });
   }
 
@@ -143,7 +174,7 @@ class _MeetPageState extends State<MeetPage> with WidgetsBindingObserver {
               context.read<MeetingBloc>().add(SaveMeeting());
               Navigator.pop(context);
             },
-            child: const Text('Save'),
+            child: const Text('Save' , selectionColor: Colors.blue,),
           ),
         ],
       ),
@@ -152,6 +183,7 @@ class _MeetPageState extends State<MeetPage> with WidgetsBindingObserver {
 
   @override
   void dispose() {
+    _transcriptionTimer?.cancel(); // Cancel the timer
     _room.stopTranscription();
     participants.clear();
     _room.leave();
@@ -268,6 +300,7 @@ class _MeetPageState extends State<MeetPage> with WidgetsBindingObserver {
         }
       },
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: Colors.black,
         body: Stack(
           children: [

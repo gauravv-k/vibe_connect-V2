@@ -49,8 +49,7 @@ class MeetingBloc extends Bloc<MeetingEvent, MeetingState> {
       UpdateTranscription event, Emitter<MeetingState> emit) async {
     if (state is MeetingInProgress) {
       final currentState = state as MeetingInProgress;
-      final newFullTranscription =
-          (currentState.transcription + ' ' + event.transcription).trim();
+      final newFullTranscription = event.transcription;
       var box = await Hive.openBox('meeting_data');
       await box.put('transcript', newFullTranscription);
       emit(MeetingInProgress(

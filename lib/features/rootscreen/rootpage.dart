@@ -35,7 +35,7 @@ class _RootPageState extends State<RootPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-     // backgroundColor: const Color(0xFF58A0C8),
+      backgroundColor:  Colors.yellow[100],
       body: _screens[_selectedIndex],
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
