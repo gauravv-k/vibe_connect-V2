@@ -1,6 +1,7 @@
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vibe_connect/features/ai_meet/bloc/meeting_bloc.dart';
 import 'package:vibe_connect/features/auth/data/firebase_auth_repo.dart';
 import 'package:vibe_connect/features/auth/presentation/cubits/auth_cubit.dart';
 import 'package:vibe_connect/features/auth/presentation/cubits/auth_states.dart';
@@ -17,6 +18,9 @@ Repositories: for the database
 Bloc Providers: for state management
 -auth
 -profile
+-meeting
+-theme
+
 
 
 Check Auth State
@@ -49,11 +53,13 @@ class MyApp extends StatelessWidget {
           BlocProvider<ProfileCubit>(
             create: (context) => ProfileCubit(profileRepo: firebaseProfileRepo),
           ),
-          
+          // meeting bloc
+          BlocProvider(
+            create: (context) => MeetingBloc(),
+          ),
         ], // theme builder
         child: BlocBuilder<ThemeCubit, ThemeData>(
-          builder: (context, currentTheme) =>
-              MaterialApp(
+          builder: (context, currentTheme) => MaterialApp(
             theme: currentTheme,
             debugShowCheckedModeBanner: false,
             home: ScaffoldMessenger(

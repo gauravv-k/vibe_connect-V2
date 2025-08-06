@@ -1,8 +1,15 @@
+// This file defines the bottom sheet for the Dream Board feature.
+// It displays generated images and allows the user to interact with the live prompt.
+// It now integrates with the MeetingBloc to save the paths of generated images.
+
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:vibe_connect/features/ai_image/logic/cubit/image_cubit.dart';
+import 'package:vibe_connect/features/ai_meet/bloc/meeting_bloc.dart';
 
 class DreamBoardBottomSheet extends StatefulWidget {
   final String Function() getTranscription;
@@ -57,6 +64,18 @@ class _DreamBoardBottomSheetState extends State<DreamBoardBottomSheet> {
     });
   }
 
+  Future<void> _saveImageLocally(ImageLoaded state) async {
+    final directory = await getApplicationDocumentsDirectory();
+    final imagePath = '${directory.path}/meeting_images';
+    final imageDir = Directory(imagePath);
+    if (!await imageDir.exists()) {
+      await imageDir.create(recursive: true);
+    }
+    final imageFile = File('$imagePath/${DateTime.now().millisecondsSinceEpoch}.png');
+    await imageFile.writeAsBytes(state.image);
+    context.read<MeetingBloc>().add(AddImagePath(imageFile.path));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -109,36 +128,43 @@ class _DreamBoardBottomSheetState extends State<DreamBoardBottomSheet> {
               SizedBox(
                 height: 250,
                 width: double.infinity,
-                child: BlocBuilder<ImageCubit, ImageState>(
-                  builder: (context, state) {
-                    if (state is ImageLoading) {
-                      return Center(
-                          child: Lottie.asset('assets/images/Loading.json',
-                              height: 150));
-                    } else if (state is ImageLoaded) {
-                      return ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: Image.memory(state.image, fit: BoxFit.cover),
-                      );
-                    } else if (state is ImageError) {
-                      return const Center(
-                          child: Text('Try speaking louder and clear.!',
-                              style: TextStyle(color: Colors.redAccent)));
+                child: BlocListener<ImageCubit, ImageState>(
+                  listener: (context, state) {
+                    if (state is ImageLoaded) {
+                      _saveImageLocally(state);
                     }
-                    return Container(
-                      decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.3),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.white10),
-                      ),
-                      child: const Center(
-                        child: Text(
-                          'Images will appear here...',
-                          style: TextStyle(color: Colors.white54),
-                        ),
-                      ),
-                    );
                   },
+                  child: BlocBuilder<ImageCubit, ImageState>(
+                    builder: (context, state) {
+                      if (state is ImageLoading) {
+                        return Center(
+                            child: Lottie.asset('assets/images/Loading.json',
+                                height: 150));
+                      } else if (state is ImageLoaded) {
+                        return ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.memory(state.image, fit: BoxFit.cover),
+                        );
+                      } else if (state is ImageError) {
+                        return const Center(
+                            child: Text('Try speaking louder and clear.!',
+                                style: TextStyle(color: Colors.redAccent)));
+                      }
+                      return Container(
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.3),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.white10),
+                        ),
+                        child: const Center(
+                          child: Text(
+                            'Images will appear here...',
+                            style: TextStyle(color: Colors.white54),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
             ],
