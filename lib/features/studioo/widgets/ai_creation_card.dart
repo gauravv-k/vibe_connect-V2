@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class AiCreationCard extends StatefulWidget {
   final String title;
   final String description;
-  final String backgroundImage;
+  final Widget background;
   final Color shadowColor;
   final VoidCallback? onTap;
 
@@ -11,7 +11,7 @@ class AiCreationCard extends StatefulWidget {
     super.key,
     required this.title,
     required this.description,
-    required this.backgroundImage,
+    required this.background,
     required this.shadowColor,
     this.onTap,
   });
@@ -58,7 +58,7 @@ class _AiCreationCardState extends State<AiCreationCard>
     final screenWidth = screenSize.width;
     
     // Calculate dynamic dimensions based on screen size
-    final cardHeight = screenHeight * 0.22; // 22% of screen height
+    final cardHeight = screenHeight * 0.28; // 28% of screen height
     final cardPadding = screenWidth * 0.03; // 3% of screen width
     final arrowContainerSize = screenWidth * 0.09; // 9% of screen width
     final arrowIconSize = screenWidth * 0.05; // 6% of screen width
@@ -89,25 +89,17 @@ class _AiCreationCardState extends State<AiCreationCard>
             child: Stack(
               children: [
                 Positioned.fill(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage(widget.backgroundImage),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.bottomCenter,
-                          end: Alignment.topCenter,
-                          colors: [
-                            Colors.black.withOpacity(0.85),
-                            Colors.transparent,
-                          ],
-                          stops: [0.0, 1.0],
-                        ),
-                      ),
+                  child: widget.background,
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.bottomCenter,
+                      end: Alignment.topCenter,
+                      colors: [
+                        Colors.black,
+                        Colors.transparent,
+                      ],
                     ),
                   ),
                 ),
@@ -134,7 +126,7 @@ class _AiCreationCardState extends State<AiCreationCard>
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 1,
                                 ),
-                                SizedBox(height: screenHeight * 0.005), // 0.5% of screen height
+                                SizedBox(height: screenHeight * 0.002), // 0.5% of screen height
                                 Text(
                                   widget.description,
                                   style: TextStyle(

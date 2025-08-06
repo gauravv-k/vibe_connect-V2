@@ -50,6 +50,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 140, 203, 228),
       resizeToAvoidBottomInset: true,
       drawer: const AppDrawer(),
       appBar: PreferredSize(

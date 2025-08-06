@@ -8,6 +8,7 @@ import 'package:vibe_connect/features/auth/presentation/cubits/auth_states.dart'
 import 'package:vibe_connect/features/onboarding/splash_page.dart';
 import 'package:vibe_connect/features/profile/data/firebase_profile_repo.dart';
 import 'package:vibe_connect/features/profile/presentation/cubits/profile_cubit.dart';
+import 'package:vibe_connect/features/storage/bloc/storage_bloc.dart';
 import 'package:vibe_connect/features/themes/cubit/theme_cubit.dart';
 
 /*
@@ -57,6 +58,11 @@ class MyApp extends StatelessWidget {
           BlocProvider(
             create: (context) => MeetingBloc(),
           ),
+          //Storage Provider
+          BlocProvider(
+            create: (context) => StorageBloc(),
+          ), 
+          
         ], // theme builder
         child: BlocBuilder<ThemeCubit, ThemeData>(
           builder: (context, currentTheme) => MaterialApp(

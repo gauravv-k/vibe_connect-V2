@@ -31,6 +31,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Scaffold(
+      backgroundColor: const Color(0xFF58A0C8),
       appBar: CustomAppBar(title: "Profile"),
       drawer: const AppDrawer(),
       body: BlocConsumer<ProfileCubit, ProfileStates>(

@@ -86,17 +86,20 @@ class MeetingBloc extends Bloc<MeetingEvent, MeetingState> {
       var box = await Hive.openBox('meeting_data');
       final meetingId = box.get('meetingId');
       final title = box.get('title');
-      final createdBy = box.get('createdBy');
+      final createdByUid = box.get('createdBy');
       final date = box.get('date');
       final transcript = box.get('transcript');
       final imagePaths = List<String>.from(box.get('imagePaths'));
 
+      final userDoc = await _firestore.collection('user').doc(createdByUid).get();
+      final createdByName = userDoc.data()?['name'] as String? ?? 'Unknown';
+
       final imageUrls = await _uploadImages(imagePaths);
 
-      await _firestore.collection('meetings').add({  // firestore 
+      await _firestore.collection('meetings').add({  // firestore
         'meetingId': meetingId,
         'title': title,
-        'createdBy': createdBy,
+        'createdBy': createdByName,
         'date': date,
         'transcript': transcript,
         'imageUrls': imageUrls,

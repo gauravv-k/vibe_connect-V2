@@ -95,6 +95,7 @@ class _MeetingScreenState extends State<MeetingScreen> {
     return WillPopScope(
       onWillPop: () => _onWillPop(),
       child: Scaffold(
+        backgroundColor: const Color(0xFF58A0C8),
         appBar: AppBar(
           title: const Text('VideoSDK QuickStart'),
         ),

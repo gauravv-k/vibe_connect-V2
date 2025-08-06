@@ -43,6 +43,7 @@ class _JoiningPageState extends State<JoiningPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF58A0C8),
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,

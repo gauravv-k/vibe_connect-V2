@@ -10,6 +10,7 @@ class ImageGenerationPage extends StatelessWidget {
     final TextEditingController controller = TextEditingController();
 
     return Scaffold(
+      backgroundColor: const Color(0xFF58A0C8),
       appBar: AppBar(
         title: const Text('AI Image Generation'),
       ),

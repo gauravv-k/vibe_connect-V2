@@ -49,6 +49,7 @@ class JoinScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF58A0C8),
       appBar: AppBar(
         title: const Text('VideoSDK QuickStart'),
       ),
