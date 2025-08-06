@@ -27,7 +27,14 @@ class MeetingInProgress extends MeetingState {
   List<Object> get props => [title, transcription, imagePaths];
 }
 
-class MeetingSaving extends MeetingState {}
+class MeetingSaving extends MeetingState {
+  final double progress;
+
+  const MeetingSaving({this.progress = 0.0});
+
+  @override
+  List<Object> get props => [progress];
+}
 
 class MeetingSaved extends MeetingState {}
 

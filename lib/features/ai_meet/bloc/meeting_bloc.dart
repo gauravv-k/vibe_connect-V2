@@ -81,7 +81,7 @@ class MeetingBloc extends Bloc<MeetingEvent, MeetingState> {
 
   Future<void> _onSaveMeeting(
       SaveMeeting event, Emitter<MeetingState> emit) async {
-    emit(MeetingSaving());
+    emit(const MeetingSaving(progress: 0.0));
     try {
       var box = await Hive.openBox('meeting_data');
       final meetingId = box.get('meetingId');
@@ -91,10 +91,11 @@ class MeetingBloc extends Bloc<MeetingEvent, MeetingState> {
       final transcript = box.get('transcript');
       final imagePaths = List<String>.from(box.get('imagePaths'));
 
-      final userDoc = await _firestore.collection('user').doc(createdByUid).get();
+      final userDoc =
+          await _firestore.collection('user').doc(createdByUid).get();
       final createdByName = userDoc.data()?['name'] as String? ?? 'Unknown';
 
-      final imageUrls = await _uploadImages(imagePaths);
+      final imageUrls = await _uploadImages(imagePaths, emit);
 
       await _firestore.collection('meetings').add({  // firestore
         'meetingId': meetingId,
@@ -112,16 +113,19 @@ class MeetingBloc extends Bloc<MeetingEvent, MeetingState> {
     }
   }
 
-  Future<List<String>> _uploadImages(List<String> imagePaths) async {
+  Future<List<String>> _uploadImages(
+      List<String> imagePaths, Emitter<MeetingState> emit) async {
     final List<String> imageUrls = [];
-    for (String imagePath in imagePaths) {
+    for (int i = 0; i < imagePaths.length; i++) {
+      final imagePath = imagePaths[i];
       final file = File(imagePath);
       final fileName = imagePath.split('/').last;
-      final ref = _storage.ref().child('meeting_images/$fileName'); // firebase storage 
+      final ref = _storage.ref().child('meeting_images/$fileName'); // firebase storage
       final uploadTask = ref.putFile(file);
       final snapshot = await uploadTask.whenComplete(() => {});
       final downloadUrl = await snapshot.ref.getDownloadURL();
       imageUrls.add(downloadUrl);
+      emit(MeetingSaving(progress: (i + 1) / imagePaths.length));
     }
     return imageUrls;
   }

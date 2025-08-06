@@ -128,8 +128,8 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(
-                  width: 190, // Smaller width
-                  height: 190, // Smaller height
+                  width: 140, // Smaller width
+                  height: 140, // Smaller height
                   child: Image.asset(
                     'assets/images/logo.png',
                     fit: BoxFit.contain,
@@ -163,7 +163,7 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
                 SlideTransition(
                   position: _slideAnimation,
                   child: Text(
-                    'AI Integrated VideoCalls ',
+                    'AI Integrated Communication ',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w400,

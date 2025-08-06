@@ -2,6 +2,7 @@
 // It integrates with the MeetingBloc to manage the meeting state and data flow.
 
 import 'dart:ui';
+import 'package:android_pip/android_pip.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +14,7 @@ import 'package:vibe_connect/features/ai_meet/bloc/meeting_bloc.dart';
 import 'package:vibe_connect/features/ai_meet/ui/dream_board_bottom_sheet.dart';
 import 'package:vibe_connect/features/ai_meet/ui/participant_tile.dart';
 import 'package:videosdk/videosdk.dart';
-import 'package:android_pip/android_pip.dart';
+import 'package:lottie/lottie.dart';
 
 class MeetPage extends StatefulWidget {
   final String meetingId;
@@ -219,12 +220,38 @@ class _MeetPageState extends State<MeetPage> with WidgetsBindingObserver {
     }
     return BlocListener<MeetingBloc, MeetingState>(
       listener: (context, state) {
-        if (state is MeetingSaving) {
+        if (state is MeetingSaving && state.progress == 0.0) {
           showDialog(
             context: context,
             barrierDismissible: false,
-            builder: (context) => const Center(
-              child: CircularProgressIndicator(),
+            builder: (dialogContext) => Dialog(
+              child: BlocProvider.value(
+                value: BlocProvider.of<MeetingBloc>(context),
+                child: BlocBuilder<MeetingBloc, MeetingState>(
+                  builder: (context, state) {
+                    if (state is MeetingSaving) {
+                      return Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Lottie.asset(
+                              'assets/images/cat_loading.json',
+                              height: 150,
+                              width: 150,
+                            ),
+                            const SizedBox(height: 20),
+                            const Text("Saving Meeting..."),
+                            const SizedBox(height: 10),
+                            LinearProgressIndicator(value: state.progress),
+                          ],
+                        ),
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
+                ),
+              ),
             ),
           );
         } else if (state is MeetingSaved) {
