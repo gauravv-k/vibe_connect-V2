@@ -181,7 +181,7 @@ class _HomePageState extends State<HomePage> {
                                     const CircleAvatar(
                                       radius: 90,
                                       backgroundImage:
-                                          AssetImage('assets/images/ai2.jpg'),
+                                          AssetImage('assets/images/videocall.png'),
                                     ),
                                     const SizedBox(height: 30),
                                     const Text(
@@ -211,7 +211,7 @@ class _HomePageState extends State<HomePage> {
                                   const CircleAvatar(
                                     radius: 90,
                                     backgroundImage:
-                                        AssetImage('assets/images/ai1.png'),
+                                        AssetImage('assets/images/ai_image_gen.png'),
                                   ),
                                   const SizedBox(height: 30),
                                   const Text(
