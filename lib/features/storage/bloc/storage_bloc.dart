@@ -24,7 +24,10 @@ class StorageBloc extends Bloc<StorageEvent, StorageState> {
   void _onLoadMeetings(LoadMeetings event, Emitter<StorageState> emit) {
     emit(StorageLoading());
     try {
-      final meetingsStream = _firestore.collection('meetings').snapshots();
+      final meetingsStream = _firestore
+          .collection('meetings')
+          .where('createdBy', isEqualTo: event.userId)
+          .snapshots();
       emit(StorageLoaded(meetingsStream));
     } catch (e) {
       emit(StorageError(e.toString()));

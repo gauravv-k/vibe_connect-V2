@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -33,7 +34,10 @@ class _StoragePageState extends State<StoragePage> {
   @override
   void initState() {
     super.initState();
-    context.read<StorageBloc>().add(LoadMeetings());
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      context.read<StorageBloc>().add(LoadMeetings(user.uid));
+    }
     _scrollController = ScrollController()
       ..addListener(() {
         setState(() {
@@ -103,7 +107,7 @@ class _StoragePageState extends State<StoragePage> {
                             final dateTime = DateTime.parse(meeting['date'] as String);
                             final formattedDate = DateFormat('dd-MM-yyyy').format(dateTime);
                             final formattedTime = DateFormat('hh:mm a').format(dateTime);
-                            final createdBy = meeting['createdBy'] as String? ?? 'Unknown';
+                            final createdBy = meeting['createdBy'] as String? ?? '';
 
                             return Positioned(
                               top: finalTop,
@@ -139,7 +143,7 @@ class _StoragePageState extends State<StoragePage> {
                                 child: StorageTile(
                                   sessionTitle: meeting['title'],
                                   subtitle: '$formattedDate at $formattedTime',
-                                  createdBy: createdBy,
+                                  createdByUid: createdBy,
                                   color: color,
                                   onTap: () {
                                     Navigator.push(

@@ -92,16 +92,12 @@ class MeetingBloc extends Bloc<MeetingEvent, MeetingState> {
       final transcript = box.get('transcript');
       final imagePaths = List<String>.from(box.get('imagePaths'));
 
-      final userDoc =
-          await _firestore.collection('user').doc(createdByUid).get();
-      final createdByName = userDoc.data()?['name'] as String? ?? 'Unknown';
-
       final imageUrls = await _uploadImages(imagePaths, emit);
 
       await _firestore.collection('meetings').add({  // firestore
         'meetingId': meetingId,
         'title': title,
-        'createdBy': createdByName,
+        'createdBy': createdByUid,
         'date': date,
         'transcript': transcript,
         'imageUrls': imageUrls,

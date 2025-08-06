@@ -35,7 +35,7 @@ Build a robust meeting data workflow updatation in my app project  where:
                                                                                                              
    --  Upload all local images to Firebase Storage and collect their URLs.                                      
   -- If user confirms:                                                                                     
- -- Upload title, meetingId, createdBy (from Firebase Auth), date, transcript, and imageUrls to Firestore by making new collection "meeting"  
+ -- Upload title, meetingId, createdBy (user's Firebase UID), date, transcript, and imageUrls to Firestore by making new collection "meeting"  
                                                                                                              
     lastly - Clean Up: hive                                                                                      
                                                                                                              

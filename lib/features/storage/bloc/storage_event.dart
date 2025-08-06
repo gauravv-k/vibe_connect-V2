@@ -7,7 +7,14 @@ abstract class StorageEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class LoadMeetings extends StorageEvent {}
+class LoadMeetings extends StorageEvent {
+  final String userId;
+
+  const LoadMeetings(this.userId);
+
+  @override
+  List<Object> get props => [userId];
+}
 
 class DeleteMeeting extends StorageEvent {
   final String meetingId;

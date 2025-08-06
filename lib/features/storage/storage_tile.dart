@@ -1,9 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class StorageTile extends StatelessWidget {
   final String sessionTitle;
   final String subtitle;
-  final String createdBy;
+  final String createdByUid;
   final Color color;
   final VoidCallback onTap;
 
@@ -11,7 +12,7 @@ class StorageTile extends StatelessWidget {
     super.key,
     required this.sessionTitle,
     required this.subtitle,
-    required this.createdBy,
+    required this.createdByUid,
     required this.color,
     required this.onTap,
   });
@@ -47,12 +48,28 @@ class StorageTile extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 4),
-            Text(
-              'Created by: $createdBy',
-              style: const TextStyle(
-                fontSize: 14,
-                color: Colors.white,
-              ),
+            FutureBuilder<DocumentSnapshot>(
+              future: FirebaseFirestore.instance.collection('user').doc(createdByUid).get(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+                  final userName = snapshot.data!['name'] as String? ?? 'Unknown';
+                  return Text(
+                    'Created by: $userName',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.white,
+                    ),
+                  );
+                } else {
+                  return const Text(
+                    'Created by: ...',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.white,
+                    ),
+                  );
+                }
+              },
             ),
             //const SizedBox(height: 0.2),
             Text(
